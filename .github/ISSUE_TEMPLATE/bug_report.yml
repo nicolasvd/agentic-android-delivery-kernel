@@ -1,0 +1,70 @@
+name: 🐛 Bug Report / Rapport d'Anomalie
+description: Signaler un dysfonctionnement, une régression ou un problème de synchronisation
+title: "fix(<scope>): <short descriptive bug title>"
+labels: ["type:bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ### 🔍 Signalement d'anomalie Agentic Android Kernel
+        Merci de détailler le comportement inattendu pour faciliter le diagnostic et la correction.
+  - type: dropdown
+    id: scope
+    attributes:
+      label: Périmètre / Domaine affecté
+      description: Choisissez le domaine principal où le bug se produit.
+      options:
+        - tasks (Création, édition, suppression, complétion de charge)
+        - matrix (Affichage ou interaction matrice Eisenhower)
+        - duo (Synchronisation en temps réel, association couple)
+        - analytics (Calcul de jauge, tendances, graphiques)
+        - auth (Connexion Google, sessions)
+        - sync (Firestore, Room, hors-ligne)
+        - ui (Affichage, glitch visuel, animation)
+        - ai (Classification Gemini, timeout API)
+    validations:
+      required: true
+  - type: textarea
+    id: bug-description
+    attributes:
+      label: Description du Bug
+      description: Description claire et concise de l'anomalie rencontrée.
+      placeholder: "Exemple : Lors du changement d'onglet vers Duo, l'état de chargement reste figé..."
+    validations:
+      required: true
+  - type: textarea
+    id: steps-to-reproduce
+    attributes:
+      label: Étapes pour Reproduire
+      description: Quelles sont les actions exactes menant au problème ?
+      placeholder: |
+        1. Ouvrir l'application
+        2. Aller sur l'onglet 'Matrice'
+        3. Glisser une tâche vers le quadrant 'Déléguer'
+        4. Observer l'erreur...
+    validations:
+      required: true
+  - type: textarea
+    id: expected-vs-actual
+    attributes:
+      label: Comportement Attendu vs Comportement Observé
+      description: Qu'aurait-il dû se passer et que s'est-il passé ?
+      placeholder: "Attendu : La tâche change de quadrant avec une animation fluide.\nObservé : Crash ou tâche inchangée."
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: Environnement de Test
+      description: Appareil, version d'Android, version de l'application.
+      placeholder: "Pixel 8 Pro - Android 14 / Émulateur API 34 - v0.1.0"
+    validations:
+      required: false
+  - type: textarea
+    id: logs-and-stacktrace
+    attributes:
+      label: Logs / Stacktrace (Optionnel)
+      description: Collez ici les logs Android Studio / Logcat pertinents.
+      placeholder: "Logcat / Stacktrace..."
+    validations:
+      required: false

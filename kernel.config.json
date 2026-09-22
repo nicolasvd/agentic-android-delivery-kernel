@@ -1,0 +1,42 @@
+{
+  "$schema": "./kernel.config.schema.json",
+  "project": {
+    "name": "Agentic Android Starter",
+    "description": "Deterministic Multi-Agent Delivery Kernel for Android Apps (Jetpack Compose, Roborazzi, Gradle)",
+    "version": "1.0.0"
+  },
+  "git": {
+    "owner": "nicolasvd",
+    "repo": "agentic-android-delivery-kernel",
+    "defaultBranch": "main"
+  },
+  "android": {
+    "namespace": "com.example.kernel.starter",
+    "applicationId": "com.example.kernel.starter",
+    "minSdk": 26,
+    "targetSdk": 37,
+    "compileSdk": 37
+  },
+  "stitch": {
+    "enabled": false,
+    "projectId": "",
+    "designAssetPath": ""
+  },
+  "githubProject": {
+    "enabled": false,
+    "projectNumber": 1
+  },
+  "airbag": {
+    "checkCommand": "./scripts/quality-check.sh",
+    "validateDocsCommand": "./scripts/validate-docs.sh",
+    "enforceZeroHardcodedStrings": true
+  },
+  "delivery": {
+    "firebase": {
+      "enabled": false,
+      "appId": "",
+      "testerGroups": "testers, dev",
+      "artifactPath": "app/build/outputs/apk/release/app-release.apk"
+    }
+  }
+}

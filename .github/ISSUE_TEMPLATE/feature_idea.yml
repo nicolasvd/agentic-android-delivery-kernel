@@ -1,0 +1,71 @@
+name: 💡 Feature Proposal / Idée de Fonctionnalité
+description: Proposer une nouvelle fonctionnalité ou amélioration pour Agentic Android Kernel
+title: "feat(<scope>): <short descriptive title>"
+labels: ["type:feature"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ### 🧠 Proposition d'évolution Agentic Android Kernel
+        Merci de contribuer à la réduction de la charge mentale ! Veuillez remplir ce formulaire pour structurer la fonctionnalité selon la démarche Spec-Driven (4 Piliers).
+  - type: dropdown
+    id: scope
+    attributes:
+      label: Périmètre / Domaine fonctionnel
+      description: Choisissez le domaine principal concerné par cette fonctionnalité.
+      options:
+        - tasks (Gestion des charges, récurrence, cycles)
+        - matrix (Matrice Eisenhower, priorisation 4 quadrants)
+        - duo (Mode Couple, rotation, synchronisation partagée)
+        - analytics (Graphiques de tendances, équilibre mental, jauges)
+        - core (Base de données locale Room, synchronisation Firestore, Auth)
+        - ai (Gemini classification automatique, suggestions intelligentes)
+        - ui (Composants visuels, animations sereines, Thème)
+    validations:
+      required: true
+  - type: textarea
+    id: problem-context
+    attributes:
+      label: Contexte & Problématique Charge Mentale
+      description: Quel est le problème réel ou la friction vécue par l'utilisateur ou le duo ? En quoi cela alourdit-il la charge mentale ?
+      placeholder: "Exemple : Les tâches ménagères récurrentes sont souvent réassignées manuellement, provoquant des frictions et une asymétrie de charge..."
+    validations:
+      required: true
+  - type: textarea
+    id: proposed-solution
+    attributes:
+      label: Solution Proposée & Expérience Utilisateur (UX)
+      description: Décrivez précisément la solution souhaitée, les interactions utilisateur et le résultat attendu.
+      placeholder: "Exemple : Introduire une règle de rotation alternée automatique à chaque complétion d'une charge récurrente..."
+    validations:
+      required: true
+  - type: textarea
+    id: impact-analytics
+    attributes:
+      label: Mesure d'impact & Analytics souhaités
+      description: Quels événements télémétriques (event_name, paramètres) ou métriques d'usage permettront de mesurer l'adoption et le succès de cette fonctionnalité ?
+      placeholder: "Exemple :\n- event_name: 'recurring_task_created' (params: frequency, is_duo_rotating, area)\n- event_name: 'duo_rotation_assigned' (params: frequency, rotation_role, cycle_count)"
+    validations:
+      required: false
+  - type: textarea
+    id: technical-architecture
+    attributes:
+      label: Pistes Techniques & Architecture (Optionnel)
+      description: Éléments pressentis pour l'implémentation (Room Schema, StateFlow, ViewModel, Jetpack Compose, Gemini, Firestore).
+      placeholder: "Exemple : Ajout d'un champ `rotationRule` dans MentalLoadItem, mise à jour de SecondBrainRepository..."
+    validations:
+      required: false
+  - type: checkboxes
+    id: quality-commitments
+    attributes:
+      label: Engagements Qualité & Guidelines
+      description: Critères obligatoires de validation pour l'implémentation future.
+      options:
+        - label: Respect de l'architecture MVI / Clean Kotlin (ViewModel, StateFlow, Room / Firestore)
+          required: true
+        - label: UI 100% Jetpack Compose conforme aux principes Serene UI (animations douces, zéro friction)
+          required: true
+        - label: Contrat d'Analytics & Observabilité formalisé
+          required: true
+        - label: Tests unitaires & Robolectric (100% passing sur `./scripts/quality-check.sh`)
+          required: true

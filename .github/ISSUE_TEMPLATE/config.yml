@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 📖 Agentic Android Kernel Documentation & Architecture
+    url: https://github.com/<owner>/<repo>/blob/main/DESIGN.md
+    about: Consultez les directives de design et d'architecture de l'application.
+  - name: 🤖 Agent Autonomous Backlog Workflow
+    url: https://github.com/<owner>/<repo>/blob/main/.agent/rules/backlog-planner.md
+    about: Guide du protocole autonome de gestion du backlog Issue-to-Plan.

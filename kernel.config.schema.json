@@ -1,0 +1,80 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "AgenticAndroidKernelConfig",
+  "description": "Configuration déclarative du noyau agentic-android-delivery-kernel",
+  "type": "object",
+  "required": ["project", "git", "android", "airbag", "delivery"],
+  "properties": {
+    "$schema": { "type": "string" },
+    "project": {
+      "type": "object",
+      "required": ["name", "description", "version"],
+      "properties": {
+        "name": { "type": "string" },
+        "description": { "type": "string" },
+        "version": { "type": "string" }
+      }
+    },
+    "git": {
+      "type": "object",
+      "required": ["owner", "repo", "defaultBranch"],
+      "properties": {
+        "owner": { "type": "string", "pattern": "^[a-zA-Z0-9_-]+$" },
+        "repo": { "type": "string", "pattern": "^[a-zA-Z0-9._-]+$" },
+        "defaultBranch": { "type": "string", "default": "main" }
+      }
+    },
+    "android": {
+      "type": "object",
+      "required": ["namespace", "applicationId", "minSdk", "targetSdk", "compileSdk"],
+      "properties": {
+        "namespace": { "type": "string" },
+        "applicationId": { "type": "string" },
+        "minSdk": { "type": "integer", "minimum": 21 },
+        "targetSdk": { "type": "integer", "minimum": 30 },
+        "compileSdk": { "type": "integer", "minimum": 30 }
+      }
+    },
+    "stitch": {
+      "type": "object",
+      "properties": {
+        "enabled": { "type": "boolean", "default": false },
+        "projectId": { "type": "string" },
+        "designAssetPath": { "type": "string" }
+      }
+    },
+    "githubProject": {
+      "type": "object",
+      "properties": {
+        "enabled": { "type": "boolean", "default": false },
+        "projectNumber": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "airbag": {
+      "type": "object",
+      "required": ["checkCommand", "validateDocsCommand", "enforceZeroHardcodedStrings"],
+      "properties": {
+        "checkCommand": { "type": "string", "default": "./scripts/quality-check.sh" },
+        "validateDocsCommand": { "type": "string", "default": "./scripts/validate-docs.sh" },
+        "enforceZeroHardcodedStrings": { "type": "boolean", "default": true }
+      }
+    },
+    "delivery": {
+      "type": "object",
+      "required": ["firebase"],
+      "properties": {
+        "firebase": {
+          "type": "object",
+          "required": ["enabled", "appId", "testerGroups", "artifactPath"],
+          "properties": {
+            "enabled": { "type": "boolean", "default": false },
+            "appId": { "type": "string" },
+            "testerGroups": { "type": "string", "default": "testers, dev" },
+            "artifactPath": { "type": "string", "default": "app/build/outputs/apk/release/app-release.apk" }
+          }
+        }
+      }
+    }
+  },
+  "additionalProperties": false
+}

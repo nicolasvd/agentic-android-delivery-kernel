@@ -1,0 +1,28 @@
+{
+  "branch-guard": {
+    "enabled": true,
+    "PreToolUse": [
+      {
+        "matcher": "write_to_file|replace_file_content",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node hooks/branch-guard.mjs",
+            "timeout": 10
+          }
+        ]
+      }
+    ]
+  },
+  "context-anchor": {
+    "enabled": true,
+    "PreInvocation": [
+      {
+        "type": "command",
+        "command": "bash hooks/pre-invocation-anchor.sh",
+        "timeout": 5
+      }
+    ]
+  }
+}
+

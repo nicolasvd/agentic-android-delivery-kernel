@@ -1,0 +1,37 @@
+# ==============================================================================
+# Android Studio & Gradle Defaults
+# ==============================================================================
+*.iml
+.gradle
+/local.properties
+local.properties
+/.idea/
+.DS_Store
+/build
+/app/build
+/captures
+.externalNativeBuild
+.cxx
+*.apk
+*.aab
+
+# ==============================================================================
+# Agent Kernel Runtime Artifacts & Workspaces
+# ==============================================================================
+.agent/tmp/
+.agent/reports/
+*.log
+
+# ==============================================================================
+# Node Tooling (Hooks & Sidecars)
+# ==============================================================================
+node_modules/
+npm-debug.log*
+
+# ==============================================================================
+# STRICT ZERO-SENSIBLE : Credentials & Keystores (MANDATORY)
+# ==============================================================================
+google-services.json
+service-account.json
+*.keystore
+*.jks

@@ -1,0 +1,112 @@
+name: 🚨 Crashlytics Incident Triage
+description: Triage a Firebase Crashlytics crash or non-fatal issue for investigation and resolution
+title: "bug(<scope>): <exception or crash description>"
+labels: ["bug", "source:crashlytics"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ### 🚨 Firebase Crashlytics Incident Triage
+        This issue follows the structured triage format mapped to `.agent/templates/crashlytics-triage-issue.md`.
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Severity 🚨
+      description: Assess blast radius and operational impact.
+      options:
+        - "P0 - Blocker 💥 (App crash / data loss / security breach)"
+        - "P1 - Major 🔴 (Core feature broken, no workaround)"
+        - "P2 - Minor 🟠 (Degraded UX, workaround exists)"
+        - "P3 - Trivial 🟢 (Cosmetic / logging)"
+    validations:
+      required: true
+  - type: input
+    id: firebase-issue-id
+    attributes:
+      label: Firebase Issue ID
+      description: The canonical Crashlytics incident ID (used for Dual-Sync closure).
+      placeholder: "e.g. 5f8b9c1d2e3f4a5b6c7d8e9f"
+    validations:
+      required: true
+  - type: input
+    id: firebase-deep-link
+    attributes:
+      label: Firebase Console Deep Link
+      description: URL to inspect this crash in the Firebase Console.
+      placeholder: "https://console.firebase.google.com/project/.../crashlytics/app/..."
+    validations:
+      required: false
+  - type: input
+    id: blast-radius
+    attributes:
+      label: Blast Radius (App Versions, Users Bucket, OS APIs)
+      description: Range of versions, user bucket ("1-5", "6-10", "10+"), and OS levels affected.
+      placeholder: "v0.3.48+ (versionCode 34800) | Users: 6-10 | Android 13-14 (API 33-34)"
+    validations:
+      required: true
+  - type: checkboxes
+    id: access-states
+    attributes:
+      label: 3-State Access Affected
+      description: Select all access states where this incident was observed.
+      options:
+        - label: Guest (Local Room SQLite)
+        - label: Solo (Personal Cloud)
+        - label: Duo (Shared Real-Time Cloud)
+  - type: textarea
+    id: stack-trace
+    attributes:
+      label: Crash Thread & Stack Trace
+      description: Exception class, crashing thread, and full stack trace.
+      placeholder: |
+        Exception: java.lang.IllegalStateException: ...
+        Thread: main
+            at com.secondbrain.app...
+    validations:
+      required: true
+  - type: textarea
+    id: custom-keys
+    attributes:
+      label: customKeys Payload (Zero-PII)
+      description: Contextual keys attached to the crash report (verify zero user personal data).
+      placeholder: |
+        {
+          "current_screen": "ClarityMatrix",
+          "offline_mode": true,
+          "task_count_bucket": "10+"
+        }
+    validations:
+      required: false
+  - type: textarea
+    id: root-cause-analysis
+    attributes:
+      label: Root Cause Hypothesis & Reproduction
+      description: Steps to reproduce and preliminary architectural diagnosis.
+      placeholder: |
+        1. Navigate to ...
+        2. Disconnect network
+        3. Tap ...
+        Hypothesis: Unhandled null state during offline transition.
+    validations:
+      required: true
+  - type: textarea
+    id: technical-fix-blueprint
+    attributes:
+      label: 4-Pillar Fix Blueprint (P4)
+      description: Fix approach, impacted files, Room migration delta, and regression test plan.
+      placeholder: |
+        - Approach: Map null state to UiState.Error
+        - Files: TaskRepository.kt, TaskViewModel.kt
+        - Room Migration: No
+        - Tests: TaskViewModelTest.kt
+    validations:
+      required: true
+  - type: checkboxes
+    id: dual-sync-checklist
+    attributes:
+      label: P6 Dual-Sync Closure Checklist
+      description: Actions executed by Persona 6 upon PR merge.
+      options:
+        - label: Call firebase-mcp-server:crashlytics_update_issue with state CLOSED
+        - label: Append resolution proof comment on GitHub Issue
+        - label: Confirm issue state transition to Done on project board

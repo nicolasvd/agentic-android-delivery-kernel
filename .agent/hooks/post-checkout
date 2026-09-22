@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+# ==============================================================================
+# Second Brain — Post-Checkout Issue Progress Sync Hook
+# ==============================================================================
+# Automatically binds open Milestone, active Cycle, and transitions issue status
+# to "In Progress" on GitHub Project board when checking out an issue branch.
+# ==============================================================================
+
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ROOT_DIR="$(cd "$SCRIPT_DIR/../.." && pwd)"
+
+BRANCH=$(git branch --show-current 2>/dev/null || true)
+
+if [[ "$BRANCH" =~ issue-([0-9]+) ]]; then
+    ISSUE_ID="${BASH_REMATCH[1]}"
+    SIDECAR="$ROOT_DIR/.agent/sidecars/sync-issue-progress.mjs"
+    if [ -f "$SIDECAR" ]; then
+        # Run in background with graceful detachment
+        (node "$SIDECAR" "$ISSUE_ID" &) 2>/dev/null || true
+    fi
+fi
