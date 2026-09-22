@@ -16,8 +16,9 @@ guardrail: Zero Branch on Epic — child issues must be created for implementati
 ## 🎯 1. Vision & Strategic Objectives
 
 - **Goal**: {{EPIC_GOAL_SUMMARY}}
-- **Business Value ⭐**: {{BUSINESS_VALUE}}
-- **Tech Complexity 🧩**: `L - Architectural 🔴`
+- **Priority**: {{PRIORITY_P0_P1_P2}}
+- **Size**: `{{SIZE_L_OR_XL}}` (Epic Gated)
+- **Estimate**: {{ESTIMATE_DAYS_OR_POINTS}}
 - **Target Milestone**: `{{MILESTONE_NAME}}`
 
 ---

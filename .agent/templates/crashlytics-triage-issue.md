@@ -5,9 +5,9 @@ usage: Use as the body for GitHubMCP:create_issue when triaging a Firebase Crash
 labels: ["bug", "source:crashlytics"]
 ---
 
-## 🚨 Severity: {{P0_BLOCKER|P1_MAJOR|P2_MINOR|P3_TRIVIAL}}
+## 🚨 Priority: {{P0|P1|P2}}
 
-> **Severity guide**: `P0 - Blocker 💥` = app crash / data loss / security breach · `P1 - Major 🔴` = core feature broken, no workaround · `P2 - Minor 🟠` = degraded UX, workaround exists · `P3 - Trivial 🟢` = cosmetic / logging
+> **Priority guide**: `P0` = app crash / data loss / security breach · `P1` = core feature broken, no workaround · `P2` = degraded UX, workaround exists
 
 ---
 

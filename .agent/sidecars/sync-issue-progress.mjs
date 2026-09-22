@@ -51,7 +51,7 @@ function setField(p, i, f, key, val) {
 
 try {
   console.log(`🔄 [SyncIssueProgress] Syncing #${issueNum}...`);
-  const q = `query($o:String!,$r:String!,$i:Int!,$p:Int!){repository(owner:$o,name:$r){issue(number:$i){id milestone{title}projectItems(first:5){nodes{id project{id}fieldValues(first:10){nodes{...on ProjectV2ItemFieldSingleSelectValue{name field{...on ProjectV2FieldCommon{name}}}...on ProjectV2ItemFieldIterationValue{title field{...on ProjectV2FieldCommon{name}}}}}}}}milestones(first:3,states:[OPEN],orderBy:{field:DUE_DATE,direction:ASC}){nodes{number title}}}user(login:$o){projectV2(number:$p){id fields(first:20){nodes{...on ProjectV2SingleSelectField{id name options{id name}}...on ProjectV2IterationField{id name configuration{iterations{id title startDate duration}}}}}}}}`;
+  const q = `query($o:String!,$r:String!,$i:Int!,$p:Int!){repository(owner:$o,name:$r){issue(number:$i){id milestone{title}projectItems(first:5){nodes{id project{id}}}}milestones(first:3,states:[OPEN],orderBy:{field:DUE_DATE,direction:ASC}){nodes{number title}}}user(login:$o){projectV2(number:$p){id fields(first:20){nodes{...on ProjectV2SingleSelectField{id name options{id name}}...on ProjectV2IterationField{id name configuration{iterations{id title startDate duration}}}}}}}}`;
 
   const data = gql(q, { o: owner, r: repo, i: issueNum, p: pNum });
   const issue = data?.repository?.issue;
@@ -82,7 +82,7 @@ try {
   }
 
   if (itemId && statusField) {
-    const inProgressOpt = statusField.options.find(o => o.name === 'In Progress');
+    const inProgressOpt = statusField.options.find(o => o.name.toLowerCase() === 'in progress');
     if (inProgressOpt) {
       console.log(`🎯 Setting Status -> In Progress...`);
       setField(project.id, itemId, statusField.id, 'singleSelectOptionId', inProgressOpt.id);

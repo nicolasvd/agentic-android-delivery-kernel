@@ -12,10 +12,10 @@ Detailed RBAC and deliverable formats are specified in each persona's manifest:
 
 | Persona | Manifest | Key Responsibilities | Key Outputs |
 |---|---|---|---|
-| **P1 · Product Planner** | [`p1-product-planner.md`](../personas/p1-product-planner.md) | User stories, acceptance criteria, Business Value, Milestone ownership | Sealed Issue, Milestone assignment, Kanban linking |
+| **P1 · Product Planner** | [`p1-product-planner.md`](../personas/p1-product-planner.md) | User stories, acceptance criteria, Priority, Milestone, Estimate | Sealed Issue, Milestone assignment, Kanban linking |
 | **P2 · Design Lead** | [`p2-design-lead.md`](../personas/p2-design-lead.md) | Material 3 token compliance, WCAG AAA, incremental screen diff policy | Pillar 1 (Design Spec) comment, Roborazzi list |
 | **P3 · Privacy & Data Lead** | [`p3-privacy-data.md`](../personas/p3-privacy-data.md) | Zero-PII telemetry enforcement, value bucketing, event schema taxonomy | Pillar 2 (Data & Privacy Spec) comment |
-| **P4 · System Architect** | [`p4-system-architect.md`](../personas/p4-system-architect.md) | Clean Arch audit, Room local-first guarantee, Tech Complexity, infra locks | Pillar 3 (Technical Blueprint) comment |
+| **P4 · System Architect** | [`p4-system-architect.md`](../personas/p4-system-architect.md) | Clean Arch audit, Room local-first guarantee, Size, Estimate, infra locks | Pillar 3 (Technical Blueprint) comment |
 
 ---
 
@@ -28,17 +28,15 @@ Git Branch           : <type>/issue-<id>-<short-kebab-slug>
 
 ---
 
-## 3. Project Metadata Triad
+## 3. Native GitHub Projects v2 Metadata
 
-Set during Inception (Rule A: immutable post-creation, revisions via `add_issue_comment` only).
+Configured on GitHub Projects v2 board. Revisions require an `add_issue_comment` rationale.
 
-| Field | Owner | Allowed Values |
+| Field | Owner | Allowed Values & Format |
 |---|---|---|
-| **Business Value ⭐** | P1 (PM) | `Core Delight ⭐` · `Habit & Retention 🔁` · `Operational & Risk ⚙️` · `Exploratory 🧪` |
-| **Tech Complexity 🧩** | P4 (Architect) | `XS - Low 🟢` (<½d) · `S - Medium 🟡` (½–1d) · `M - High 🟠` (1–3d) · `L - Architectural 🔴` (Epic) |
-| **Severity 🚨** | P1 (PM, bugs only) | `P0 - Blocker 💥` · `P1 - Major 🔴` · `P2 - Minor 🟠` · `P3 - Trivial 🟢` |
-
-> `feature`, `enhancement`, `chore` tickets must NOT use `Severity`.
+| **Priority** | P1 (PM) / Triage | `P0` (Blocker/Fatal) · `P1` (Major) · `P2` (Minor) |
+| **Size** | P4 (Architect) | `XS` (<½d) · `S` (½–1d) · `M` (1–3d) · `L` (3–5d) · `XL` (>5d) |
+| **Estimate** | P1 & P4 | Numeric estimate (days or story points) |
 
 ---
 
@@ -54,8 +52,8 @@ Every task (feature, bug, refactor, chore, docs) requires:
 
 ---
 
-### 🏛️ Rule 0.1 · Epic Gating (Tech Complexity: L)
-Issues rated `L - Architectural 🔴` are classified as **Epics**.
+### 🏛️ Rule 0.1 · Epic Gating (Size: L / XL)
+Issues rated `Size: L` or `Size: XL` (or `Estimate >= 3d`) are classified as **Epics**.
 - **Zero Branch Guardrail**: Never branch or commit directly on an Epic issue.
 - **Sequential Decomposition**: P1 & P4 decompose Epics into atomic child issues (< 300 diff lines) referencing the parent (`parent: #<id>`), merged sequentially to `main` (Trunk-Based) using [`.agent/templates/epic-spec.md`](../templates/epic-spec.md).
 - **Silent Merges (`skip-release`)**: Intermediate child PRs carry `skip-release`.
@@ -69,7 +67,7 @@ Issues rated `L - Architectural 🔴` are classified as **Epics**.
 
 - `GitHubMCP:update_issue` targeting `title` or `body` is **strictly forbidden**.
 - Branch names and types are **immutable**: a `feat/issue-<id>-*` stays `feat/` even if Phase 2 reveals minor bugs.
-- Metadata Triad fields (`Business Value`, `Tech Complexity`, `Severity`) are set during Inception; revisions require an `add_issue_comment`.
+- Native project fields (`Priority`, `Size`, `Estimate`, `Status`) are set on the Project board; revisions require an explanatory `add_issue_comment` for auditability.
 - All scope changes, plan pivots, and discussions are appended via `GitHubMCP:add_issue_comment`.
 
 ---
@@ -87,8 +85,8 @@ Every Issue and PR must be assigned to `@me` at creation. No unowned tickets.
 
 ---
 
-### 📋 Rule 3 · Kanban Attachment, Cycle & Milestone Linking
-**At `Backlog` creation**: Attach to project Kanban and assign Metadata Triad.
+### 📋 Rule 3 · Kanban Attachment & Milestone Linking
+**At `Backlog` creation**: Attach to project board and assign Priority, Size, Estimate, Status.
 **At `Ready` transition**: Link active Cycle and target Milestone:
 ```bash
 gh issue edit <id> --milestone "<Milestone>"
@@ -127,7 +125,7 @@ Acceptance: 0 errors · 0 warnings · 100% unit/Robolectric tests · 100% Firest
 
 ### 📱 Rule 8 · Observability Triage (Crashlytics)
 Format incident issues using [`.agent/templates/crashlytics-triage-issue.md`](../templates/crashlytics-triage-issue.md).
-- Set `Severity 🚨` (P0 to P3). On PR merge, P6 triggers Dual-Sync closure.
+- Set `Priority` (P0 to P2). On PR merge, P6 triggers Dual-Sync closure.
 
 ---
 
@@ -172,13 +170,13 @@ User Request
     │
     ▼ P1: Anti-duplication (GitHubMCP:search_issues)
     │
-    ▼ P1: Create sealed Issue + assign Business Value + create/link Milestone
+    ▼ P1: Create sealed Issue + assign Priority/Estimate + link Milestone
     │
     ▼ P1: Kanban attachment (Backlog)
     │
     ├─▶ P2: Pillar 1 comment (Design Spec)
     ├─▶ P3: Pillar 2 comment (Data & Privacy Spec)
-    └─▶ P4: Pillar 3 comment (Technical Blueprint) + assign Tech Complexity
+    └─▶ P4: Pillar 3 comment (Technical Blueprint) + assign Size/Estimate
     │
     ▼ P1: Cycle & Milestone linking → Kanban to Ready
     │
@@ -193,7 +191,7 @@ User Request
 
 | Status | Meaning | Next Step |
 |---|---|---|
-| `Backlog` | Issue created, Metadata Triad pending | Run `/plan-issue` |
+| `Backlog` | Issue created, native fields assigned | Run `/plan-issue` |
 | `Ready` | 4-Pillar plan validated, Cycle & Milestone linked | Create branch → code |
 | `In Progress` | Active branch, Cycle & Metadata set | Finish tests, push |
 | `In Review` | PR opened with Walkthrough (`Closes #<id>`) | CI gate & review |

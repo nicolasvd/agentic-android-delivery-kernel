@@ -9,15 +9,14 @@ body:
         ### 🚨 Firebase Crashlytics Incident Triage
         This issue follows the structured triage format mapped to `.agent/templates/crashlytics-triage-issue.md`.
   - type: dropdown
-    id: severity
+    id: priority
     attributes:
-      label: Severity 🚨
+      label: Priority
       description: Assess blast radius and operational impact.
       options:
-        - "P0 - Blocker 💥 (App crash / data loss / security breach)"
-        - "P1 - Major 🔴 (Core feature broken, no workaround)"
-        - "P2 - Minor 🟠 (Degraded UX, workaround exists)"
-        - "P3 - Trivial 🟢 (Cosmetic / logging)"
+        - "P0 (App crash / data loss / security breach)"
+        - "P1 (Core feature broken, no workaround)"
+        - "P2 (Degraded UX, workaround exists)"
     validations:
       required: true
   - type: input

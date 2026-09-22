@@ -29,7 +29,7 @@ flowchart LR
 
 1. **Phase 1 — Inception (Personas 1–4)**:
    - Activates **Persona 1 (Product Planner)**: anti-duplicate search via `GitHubMCP:search_issues`.
-   - P1 calls `GitHubMCP:create_issue` to seal the tracking issue assigned to `@me` with Metadata Triad.
+   - P1 calls `GitHubMCP:create_issue` to seal the tracking issue assigned to `@me` with native GitHub Projects v2 metadata (`Priority`, `Size`, `Estimate`).
    - P1 orchestrates the canonical 4-Pillar Spec comment via `GitHubMCP:add_issue_comment`.
    - **Dual-Write Pattern**: Mirrors the spec locally into `implementation_plan.md` artifact (`RequestFeedback: true`, `UserFacing: true`) for IDE alignment.
    - **Gate 1.4 Verification (STOP & WAIT)**: Strict halt. Zero branches or code edits before explicit written approval.
@@ -57,10 +57,10 @@ Pillar 1 (Design Spec) enforcement is contextual and adaptive:
 
 | Persona | Manifest | Role & Deliverables | Metadata Ownership |
 |---|---|---|---|
-| **P1 · Product Planner** | [p1-product-planner.md](.agent/personas/p1-product-planner.md) | User Stories (Gherkin), 3-State Access Matrix, Milestones, Backlog hygiene | `Business Value ⭐`, `Severity 🚨` |
+| **P1 · Product Planner** | [p1-product-planner.md](.agent/personas/p1-product-planner.md) | User Stories (Gherkin), 3-State Access Matrix, Milestones, Backlog hygiene | `Priority`, `Estimate` (co-owner) |
 | **P2 · Design Lead** | [p2-design-lead.md](.agent/personas/p2-design-lead.md) | Material 3 tokens, WCAG AAA, 4-state UI matrix, Stitch MCP sync | Pillar 1 Design Spec |
 | **P3 · Privacy & Data** | [p3-privacy-data.md](.agent/personas/p3-privacy-data.md) | Zero-PII telemetry, event taxonomy, GDPR/AI Act compliance | Pillar 2 Data Spec |
-| **P4 · System Architect** | [p4-system-architect.md](.agent/personas/p4-system-architect.md) | Clean Arch, Room DDL, boundary audit, Epic DAG decomposition | `Tech Complexity 🧩` (XS/S/M/L) |
+| **P4 · System Architect** | [p4-system-architect.md](.agent/personas/p4-system-architect.md) | Clean Arch, Room DDL, boundary audit, Epic DAG decomposition | `Size` (XS/S/M/L/XL), `Estimate` (co-owner) |
 | **P5 · Software Engineer** | [p5-software-engineer.md](.agent/personas/p5-software-engineer.md) | Kotlin/Compose implementation, Clean MVI, Zero Hardcoded Strings | Working code, atomic commits |
 | **P6 · Release Manager** | [p6-release-manager.md](.agent/personas/p6-release-manager.md) | Quality Airbag, PR walkthrough, Milestone release train, Crashlytics sync | PR Lifecycle, Tier 1/2 releases |
 
@@ -70,7 +70,7 @@ Pillar 1 (Design Spec) enforcement is contextual and adaptive:
 
 1. **Rule 0 (Issue-First)**: Zero code, branch, or PR without a prior sealed GitHub Issue.
 2. **Rule A (Append-Only Immutability)**: Issue title and body are READ-ONLY once created. Revisions appended via comments.
-3. **Rule 0.1 (Epic Gating)**: Issues with `Tech Complexity: L` require decomposition into atomic child issues (< 300 diff lines) via [`.agent/templates/epic-spec.md`](.agent/templates/epic-spec.md). Zero branching on Epics.
+3. **Rule 0.1 (Epic Gating)**: Issues evaluated as `Size: L` or `Size: XL` require decomposition into atomic child issues (< 300 diff lines) via [`.agent/templates/epic-spec.md`](.agent/templates/epic-spec.md). Zero branching on Epics.
 4. **WIP = 1**: Exactly 1 issue `In Progress` and at most 1 PR `In Review` at any time.
 5. **Dual-Write Pattern**: Canonical spec resides on GitHub Issue; mirrored to local `implementation_plan.md` for IDE harmony.
 6. **Zero Auto-Merge**: The agent never merges autonomously without human confirmation.
@@ -90,10 +90,10 @@ Pillar 1 (Design Spec) enforcement is contextual and adaptive:
 - **Sources**: `source:crashlytics`, `source:tester-feedback`, `source:internal`.
 - **CI Control**: `skip-release` (omits APK build for docs, governance, and intermediate Epic tasks).
 
-### 3.2 Project Metadata Triad
-- **Business Value ⭐** (P1): `Core Delight ⭐` · `Habit & Retention 🔁` · `Operational & Risk ⚙️` · `Exploratory 🧪`
-- **Tech Complexity 🧩** (P4): `XS - Low 🟢` (<½d) · `S - Medium 🟡` (½–1d) · `M - High 🟠` (1–3d) · `L - Architectural 🔴` (Epic)
-- **Severity 🚨** (P1 — bugs only): `P0 - Blocker 💥` · `P1 - Major 🔴` · `P2 - Minor 🟠` · `P3 - Trivial 🟢`
+### 3.2 Native GitHub Projects v2 Metadata
+- **Priority** (P1): `P0` (Blocker/Fatal) · `P1` (Major) · `P2` (Minor)
+- **Size** (P4): `XS` (<½d) · `S` (½–1d) · `M` (1–3d) · `L` (3–5d, Epic Gated) · `XL` (>5d, Epic Gated)
+- **Estimate** (P1/P4): Numeric estimate in days or story points
 
 ### 3.3 Kanban Lifecycle
 `Backlog` (Created) $\to$ `Ready` (Plan Approved) $\to$ `In Progress` (Branch Active) $\to$ `In Review` (PR Open) $\to$ `Done` (Merged).

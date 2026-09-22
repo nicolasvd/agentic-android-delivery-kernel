@@ -65,9 +65,10 @@ Issues are immutable upon creation (**Rule A — Append-Only**).
   "labels": ["<type_label>", "source:<origin>"]
 }
 ```
-Set at creation and never edited thereafter:
-- **Business Value ⭐**: `Core Delight ⭐` · `Habit & Retention 🔁` · `Operational & Risk ⚙️` · `Exploratory 🧪`
-- **Severity 🚨** (bugs & `source:crashlytics` only): `P0 - Blocker 💥` · `P1 - Major 🔴` · `P2 - Minor 🟠` · `P3 - Trivial 🟢`
+Set at creation and assigned on GitHub Projects v2:
+- **Priority**: `P0` (Blocker/Fatal) · `P1` (Major) · `P2` (Minor)
+- **Estimate** (co-owned with P4): Numeric estimate in days or story points
+- **Status**: `Backlog`
 
 ### 3. Milestone & Cycle Scoping
 - Create and scope GitHub Milestones (release boundaries).
