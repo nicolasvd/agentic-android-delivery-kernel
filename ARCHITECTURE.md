@@ -98,6 +98,6 @@ The framework installs runtime safety hooks directly intercepting agent tool exe
 
 1. **Rule 0 (Issue-First)**: Every branch and PR must originate from an existing, sealed GitHub Issue.
 2. **Rule A (Append-Only Immutability)**: Issue titles and initial descriptions are append-only. Scope modifications are recorded via comments.
-3. **Rule 0.1 (Epic Gating)**: Issues evaluated as `Tech Complexity: L` must be decomposed into atomic child tasks (< 300 LOC) before implementation.
+3. **Rule 0.1 (Epic Gating)**: Issues evaluated as `Size: L` or `Size: XL` must be decomposed into atomic child tasks (< 300 LOC) before implementation.
 4. **WIP = 1**: Strictly one issue in progress and at most one PR under review at any time.
 5. **Zero Auto-Merge**: The agent halts at Gate 3.5 and never merges autonomously.

@@ -70,7 +70,7 @@ Each persona contributes to the canonical 4-Pillar Spec posted via `GitHubMCP:ad
 - **P1 Product Planner** → User Story (Gherkin) & 3-State Access Matrix (Guest/Solo/Duo).
 - **P2 Design Lead** → Pillar 1: Material 3 tokens, WCAG 2.1 AAA, 4-state UI matrix, Roborazzi expectations (or explicit `N/A — No visual/UI changes`).
 - **P3 Privacy & Data Lead** → Pillar 2: Zero-PII telemetry, value bucketing, GDPR/AI Act compliance.
-- **P4 System Architect** → Pillar 3: Room schema/DDL, Firestore rules delta, Clean MVI, infra locks (`AppDatabase.kt`, `firestore.rules`, `strings.xml`), Tech Complexity.
+- **P4 System Architect** → Pillar 3: Room schema/DDL, Firestore rules delta, Clean MVI, infra locks (`AppDatabase.kt`, `firestore.rules`, `strings.xml`), Size & Estimate.
 
 ### Step 1.3 · Dual-Write Pattern & Gate 1.4 Approval (Rule 1.5)
 - **Canonical Remote Truth**: The sealed GitHub issue and its 4-Pillar comment serve as the authoritative project contract.

@@ -23,8 +23,8 @@
     "designAssetPath": ""
   },
   "githubProject": {
-    "enabled": false,
-    "projectNumber": 1
+    "enabled": true,
+    "projectNumber": 2
   },
   "airbag": {
     "checkCommand": "./scripts/quality-check.sh",

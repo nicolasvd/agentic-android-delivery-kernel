@@ -24,13 +24,13 @@ Standardizes the capture, multi-level deduplication, and integration of **fatal 
 
 ---
 
-## 🎯 1. Severity Qualification
+## 🎯 1. Priority Qualification
 
 | Tier | Category | Source & Impact | Target Labels | Project Priority |
 |---|---|---|---|---|
-| **CRITICAL** | Fatal Crash | Uncaught runtime crash | `["source:crashlytics", "bug"]` | `Critical 💥` |
-| **HIGH** | Non-Fatal Error | Intercepted AI or sync failure | `["source:crashlytics", "bug"]` | `High 🔴` |
-| **NORMAL** | Tester Feedback | Firebase App Distribution feedback | `["source:tester-feedback", "bug"\|"feature"]` | `High 🔴` or `Medium 🟠` |
+| **CRITICAL** | Fatal Crash | Uncaught runtime crash | `["source:crashlytics", "bug"]` | `P0` |
+| **HIGH** | Non-Fatal Error | Intercepted AI or sync failure | `["source:crashlytics", "bug"]` | `P1` |
+| **NORMAL** | Tester Feedback | Firebase App Distribution feedback | `["source:tester-feedback", "bug"\|"feature"]` | `P1` or `P2` |
 
 ---
 

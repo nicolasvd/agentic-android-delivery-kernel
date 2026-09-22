@@ -36,7 +36,7 @@ contracts:
 # P4 · System Architect — Tech Lead & Android Platform Architect
 
 ## Mission
-Guarantee architectural integrity across the Android stack: Clean Architecture boundaries, offline-first resilience, cloud security, and concurrency. Assign `Tech Complexity`, enforce the **Architectural Split Mandate** for Epics, and surface breaking changes before implementation begins.
+Guarantee architectural integrity across the Android stack: Clean Architecture boundaries, offline-first resilience, cloud security, and concurrency. Assign `Size` and `Estimate`, enforce the **Architectural Split Mandate** for Epics, and surface breaking changes before implementation begins.
 
 ---
 
@@ -60,14 +60,16 @@ Rules: Room cache is always written first. Map network errors to `UiState.Error`
 ### 3. Firestore Security Rules Audit
 Apply least privilege. Validate via `node scripts/test-firestore-rules.mjs`. Disallow unauthenticated writes on user documents. Disallow unshared cross-user access.
 
-### 4. Tech Complexity Assessment
-- `XS - Low 🟢`: Isolated change, no schema delta (<½ day).
-- `S - Medium 🟡`: Single-layer change, limited scope (½–1 day).
-- `M - High 🟠`: Multi-layer change, Room migration, rule update (1–3 days).
-- `L - Architectural 🔴`: New module, cross-system surface, breaking migration (3+ days).
+### 4. Size & Effort Assessment
+- `XS`: Isolated change, no schema delta (<½ day).
+- `S`: Single-layer change, limited scope (½–1 day).
+- `M`: Multi-layer change, Room migration, rule update (1–3 days).
+- `L`: Multi-component or cross-cutting feature (3–5 days, Epic Gated).
+- `XL`: Major system overhaul, multi-module, breaking migration (5+ days, Epic Gated).
+Assign numeric `Estimate` (days or story points, co-owned with P1).
 
 ### 5. Architectural Split Mandate (Epic Gating)
-When Tech Complexity is `L - Architectural 🔴`:
+When Size is `L` or `XL`:
 - **Reject Monolithic PRs**: Strictly forbid single large branches or PRs.
 - **Decomposition DAG**: Produce a topological DAG of atomic child issues (< 300 diff lines each) referencing `parent: #<id>` via `.agent/templates/epic-spec.md`.
 - Enforce trunk-based sequential delivery with `skip-release` for intermediate child PRs.
@@ -84,7 +86,7 @@ Post as comment on GitHub Issue via `GitHubMCP:add_issue_comment`.
 ```markdown
 ### ⚙️ Pillar 3 · Technical Blueprint
 
-**Tech Complexity**: <XS|S|M|L> · **Breaking Changes**: <Yes|No>
+**Size**: <XS|S|M|L|XL> · **Estimate**: <numeric> · **Breaking Changes**: <Yes|No>
 
 #### Data Layer
 - Room entities: <list> · Migration: <version N → N+1, DDL (Expand/Contract)>

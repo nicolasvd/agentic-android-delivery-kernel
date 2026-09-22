@@ -37,7 +37,7 @@ Feature: {{FEATURE_NAME}}
 - [ ] Zero regressions on existing Roborazzi snapshots.
 - [ ] `./scripts/quality-check.sh` exits 0.
 
-**Metadata**: **Milestone**: `{{MILESTONE_NAME}}` · **Cycle**: `{{CYCLE_NAME}}` · **Business Value**: `{{BUSINESS_VALUE}}`
+**Metadata**: **Milestone**: `{{MILESTONE_NAME}}` · **Priority**: `{{PRIORITY_P0_P1_P2}}` · **Size**: `{{SIZE_XS_TO_XL}}` · **Estimate**: `{{ESTIMATE}}`
 
 ---
 
@@ -86,7 +86,7 @@ Feature: {{FEATURE_NAME}}
 
 ## Pillar 3 · Technical Blueprint (P4 — System Architect)
 
-**Tech Complexity**: `{{XS_S_M_L}}` · **Breaking change**: `{{YES_NO}}`
+**Size**: `{{XS_S_M_L_XL}}` · **Estimate**: `{{ESTIMATE}}` · **Breaking change**: `{{YES_NO}}`
 
 **Data layer**:
 - Room entity delta: `{{ENTITY_CHANGES}}`
@@ -128,8 +128,8 @@ pr: {{PR_NUMBER_OR_NULL}}
 milestone: "{{MILESTONE_NAME}}"
 cycle: "{{CYCLE_NAME}}"
 metadata:
-  business_value: "{{BUSINESS_VALUE}}"
-  tech_complexity: "{{TECH_COMPLEXITY}}"
-  severity: {{SEVERITY_OR_NULL}}
+  priority: "{{PRIORITY}}"
+  size: "{{SIZE}}"
+  estimate: {{ESTIMATE}}
 ---
 ```

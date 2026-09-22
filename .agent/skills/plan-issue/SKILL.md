@@ -38,7 +38,7 @@ GitHubMCP:search_issues { "q": "repo:<owner>/<repo> is:issue <keywords>" }
 ```
 If an open issue already covers the scope, switch to that issue or add context via comment.
 
-### Step 3: Sealed Issue Creation & Metadata Triad (Persona 1)
+### Step 3: Sealed Issue Creation & Native Project Metadata (Persona 1)
 If new, P1 creates the issue assigned strictly to `@me` (`@me`):
 ```json
 GitHubMCP:create_issue {
@@ -50,10 +50,11 @@ GitHubMCP:create_issue {
   "assignees": ["@me"]
 }
 ```
-P1 assigns the **Metadata Triad**:
-- `Business Value ⭐`: Low / Medium / High / Critical
-- `Severity 🚨`: Low / Medium / High / Critical (bugs only, N/A for features)
-- `Tech Complexity 🧩`: S / M / L (determined with P4)
+P1 assigns the native **GitHub Projects v2 Metadata**:
+- `Priority`: `P0` / `P1` / `P2`
+- `Size`: `XS` / `S` / `M` / `L` / `XL` (determined with P4)
+- `Estimate`: Numeric estimate in points or days (co-owned with P4)
+- `Status`: `Backlog`
 
 ### Step 4: 4-Pillar Spec Orchestration & Conditional P2 Design Gate
 Consortium members populate [`.agent/templates/4-pillar-spec.md`](../../templates/4-pillar-spec.md) through contextual triage:
@@ -63,10 +64,10 @@ Consortium members populate [`.agent/templates/4-pillar-spec.md`](../../template
    - **Non-UI Changes**: For pure backend, Room, Firestore rules, CI/CD, scripts, or chores, mark: `N/A — No visual/UI changes`.
    - **Explicit User Override**: If prompt explicitly requests to skip design (e.g. *"skip design"*), bypass P2 immediately.
 3. **P3 (Privacy & Data Lead)**: Pillar 2 Data Spec (Zero-PII telemetry, event taxonomy, GDPR).
-4. **P4 (System Architect)**: Pillar 3 Technical Blueprint (Room, Firestore, architecture boundaries, and `Tech Complexity 🧩`).
+4. **P4 (System Architect)**: Pillar 3 Technical Blueprint (Room, Firestore, architecture boundaries, `Size` and `Estimate`).
 
-### Step 4.1: Complexity L Route — Epic Decomposition (Rule 0.1)
-If `Tech Complexity` is `L - Architectural 🔴` (new modules, Wear OS, breaking migrations):
+### Step 4.1: Complexity L/XL Route — Epic Decomposition (Rule 0.1)
+If `Size` is `L` or `XL` (or `Estimate >= 3d`):
 - **Classify as Epic**: Zero Branch Guardrail — strictly forbidden to branch or commit on this issue.
 - **Decompose**: P1 & P4 produce [`.agent/templates/epic-spec.md`](../../templates/epic-spec.md) detailing the child-issue DAG (< 300 diff lines each).
 - Intermediate child PRs carry the `skip-release` label.
