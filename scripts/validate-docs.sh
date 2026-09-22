@@ -137,6 +137,7 @@ check_executable ".agent/hooks/pre-commit-airbag.sh" "Hook Pré-Commit Airbag"
 check_executable ".agent/hooks/post-merge-dual-sync.sh" "Hook Post-Merge Dual-Sync"
 check_file ".agent/hooks.json" "Déclaration Native des Hooks Antigravity" 1000
 check_executable ".agent/hooks/branch-guard.mjs" "Hook Branch-Guard PreToolUse" 3000
+check_executable ".agent/hooks/plan-guard.mjs" "Hook Plan-Guard PreToolUse" 5500
 check_executable ".agent/hooks/pre-invocation-anchor.sh" "Hook Context-Anchor PreInvocation" 1000
 check_executable ".agent/hooks/post-checkout" "Hook Post-Checkout Issue Progress Sync" 2000
 
