@@ -9,11 +9,11 @@ tools:
     - find_by_name
     - grep_search
     - list_dir
-    - run_command (read-only verification: test scripts & rules)
     - GitHubMCP:add_issue_comment
   deny:
     - write_to_file
     - replace_file_content
+    - run_command
     - GitHubMCP:create_issue
     - GitHubMCP:create_pull_request
     - GitHubMCP:merge_pull_request
