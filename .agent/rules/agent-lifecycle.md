@@ -41,45 +41,35 @@ Every task follows a strict **3-Phase Deterministic Lifecycle** executed by 6 En
 
 ## 2. Phase 1 · Inception & Scoping (Personas 1–4)
 
-### Step 1.0 · Sealed Issue Creation (P1 — Product Planner)
-**Absolute rule**: no branch, no file edit, no PR without a prior GitHub Issue.
-
-Anti-duplication first: `GitHubMCP:search_issues` → `{ "query": "repo:<owner>/<repo> is:issue <keywords>" }`
-
-If no duplicate, create sealed issue via `GitHubMCP:create_issue` with title `<type>(<scope>): <title>`, assign `@me`, and retrieve `<id>`.
-Conversation naming: `[#<id>] <type>(<scope>): <title>`
-
-Kanban attachment:
-```bash
-gh project item-add <PROJECT> --owner @me --url "https://github.com/<owner>/<repo>/issues/<id>"
-gh project item-edit <PROJECT> --owner @me --url "..." --field "Status" --value "Backlog"
-```
+### Step 1.0 · Anti-Duplication & Local Inception (P1 & P4)
+**Rule 0 (JIT Issue-First)**: Zero code, branch, or premature GitHub issues before Gate 1.4.
+- Anti-duplication first: `GitHubMCP:search_issues` → `{ "query": "repo:<owner>/<repo> is:issue <keywords>" }`
+- P1 & P4 elaborate specification locally in `implementation_plan.md` artifact (`issue: null`, `RequestFeedback: true`).
+- P4 consolidates `Size` (XS–XL) and `Estimate` into Pillar 3 before sealing.
 
 ### Step 1.1 · Rule A — Issue & Branch Immutability (Append-Only)
 
 > [!CAUTION]
 > **Issue title and initial body are permanently sealed upon creation (READ-ONLY).**
 
-- `GitHubMCP:update_issue` targeting `title` or `body` is **strictly forbidden**.
+- `GitHubMCP:update_issue` targeting `title` or `body` is strictly forbidden.
 - Branch type is immutable: a `feat/issue-<id>-*` stays `feat/` even if Phase 2 reveals bugs.
-- Never rename a branch mid-flight. Scope revisions/corrections MUST use `GitHubMCP:add_issue_comment`.
+- Scope revisions/corrections MUST use `GitHubMCP:add_issue_comment`.
 
 ### Step 1.2 · 4-Pillar Spec Orchestration (P1 orchestrates P2–P4)
-Each persona contributes to the canonical 4-Pillar Spec posted via `GitHubMCP:add_issue_comment`:
-
 - **P1 Product Planner** → User Story (Gherkin) & 3-State Access Matrix (Guest/Solo/Duo).
-- **P2 Design Lead** → Pillar 1: Material 3 tokens, WCAG 2.1 AAA, 4-state UI matrix, Roborazzi expectations (or explicit `N/A — No visual/UI changes`).
+- **P2 Design Lead** → Pillar 1: Material 3 tokens, WCAG 2.1 AAA, 4-state UI matrix, Roborazzi expectations (or `N/A — No visual/UI changes`).
 - **P3 Privacy & Data Lead** → Pillar 2: Zero-PII telemetry, value bucketing, GDPR/AI Act compliance.
-- **P4 System Architect** → Pillar 3: Room schema/DDL, Firestore rules delta, Clean MVI, infra locks (`AppDatabase.kt`, `firestore.rules`, `strings.xml`), Size & Estimate.
+- **P4 System Architect** → Pillar 3: Room schema/DDL, Firestore rules delta, Clean MVI, infra locks, Size & Estimate.
 
-### Step 1.3 · Dual-Write Pattern & Gate 1.4 Approval (Rule 1.5)
-- **Canonical Remote Truth**: The sealed GitHub issue and its 4-Pillar comment serve as the authoritative project contract.
-- **Local IDE Mirror**: To harmonize with Antigravity IDE native planning capabilities, the Orchestrator mirrors the 4-Pillar spec locally into the `implementation_plan.md` artifact (`RequestFeedback: true`, `UserFacing: true`).
-- **Gate 1.4 Hard Stop**: **STOP AND WAIT**. The agent must not create any git branch or edit any source file until the user provides explicit approval.
-- Post-approval: Kanban status transitions to `Ready`.
+### Step 1.3 · Gate 1.4 Approval & JIT Sealing (Rule 1.5)
+- **Gate 1.4 Hard Stop**: **STOP AND WAIT**. Zero branches, code edits, or remote issue creation before explicit user approval.
+- **JIT Sealing via CLI**: Upon user approval, execute:
+  `./scripts/seal-issue.sh --from-plan [path_to_plan]`
+  This creates the GitHub issue, applies native flags (`--milestone`, `--parent`), attaches Project v2 metadata (`Priority`, `Size`, `Estimate`, `Status: Ready`), and initializes `epic/**` branch if Epic.
 
 ### Step 1.4 · Hand-off to Persona 5
-Phase 1 is complete. Dedicated branch creation and all source edits begin exclusively in Phase 2.
+Phase 1 is complete. Dedicated branch creation and source edits begin exclusively in Phase 2.
 
 ---
 
@@ -87,14 +77,17 @@ Phase 1 is complete. Dedicated branch creation and all source edits begin exclus
 
 ### Step 2.1 · Dedicated Branch Creation (Branch-First Isolation & WIP = 1)
 **WIP = 1 Pre-check**: `gh pr list --state open` must be empty. If an open PR exists, STOP until it merges.
+Base branch resolution:
+- Standalone / Epic: branched from `main`.
+- Epic Child Task: branched from active parent branch (`epic/issue-<epic_id>-<slug>`).
 
 ```bash
-git checkout main && git pull origin main
+git checkout <base_branch> && git pull origin <base_branch>
 git checkout -b <type>/issue-<id>-<short-kebab-slug>
 ```
-Or remotely via `GitHubMCP:create_branch` with `from_branch: "main"`. Kanban → `In Progress`.
+Kanban status transitions to `In Progress`.
 
-**FORBIDDEN**: any file edit on `main` or starting while another PR is open.
+**FORBIDDEN**: any file edit on `main` or `epic/*` or starting while another PR is open.
 
 ### Step 2.2 · Native Implementation
 - **Clean MVI**: `data/model` → `data/repository` → `ui/viewmodel` (StateFlow) → `ui/components` (Compose).
@@ -105,7 +98,7 @@ Or remotely via `GitHubMCP:create_branch` with `from_branch: "main"`. Kanban →
 
 ### Step 2.3 · Atomic Commits on Dedicated Branch
 Format: `<type>(<scope>): <present-tense description>`
-Push exclusively to `<type>/issue-<id>-<slug>`. Zero commits on `main`.
+Push exclusively to `<type>/issue-<id>-<slug>`. Zero commits on `main` or `epic/*`.
 
 ### Step 2.4 · Hand-off to Persona 6
 Phase 2 complete. Delivery and observability sync begin in Phase 3.
@@ -126,32 +119,31 @@ Anti-duplicate & WIP check: `gh pr list --state open`
 
 If no open PR:
 ```bash
-git fetch origin main && git rebase origin/main
+git fetch origin <base_branch> && git rebase origin/<base_branch>
 git push -u origin <type>/issue-<id>-<slug>
-gh pr create --base main --head <type>/issue-<id>-<slug> \
+gh pr create --base <base_branch> --head <type>/issue-<id>-<slug> \
   --title "<type>(<scope>): <title>" --body-file ./walkthrough.md
 ```
-- Assign to `@me`. Attach to "Project Kanban" → `In Review`.
+- PR targets `epic/**` with `skip-release` for intermediate child PRs; `main` for standalone or consolidated Epic release PRs.
+- Assign to `@me`. Never add PRs directly to Project board (board hygiene).
 - PR body hosts **exclusively** the Walkthrough (`Closes #<id>`, files, test proofs, Roborazzi snapshots).
-- **STOP & WAIT FOR USER APPROVAL**.
+- **STOP & WAIT FOR USER APPROVAL (Gate 3.5)**.
 
 ### Step 3.3 · Zero Auto-Merge Rule
 
 > [!CAUTION]
 > The agent NEVER merges a PR autonomously. Present the PR link and stop. Merge only after the user says *"Tu peux merger"* or equivalent.
 
-### Step 3.4 · Post-Merge Branch Cleanup
+### Step 3.4 · Post-Merge Branch Cleanup & Dynamic Sync
 
 > [!IMPORTANT]
-> Mandatory remote branch deletion. Never leave orphan branches on `origin`.
+> Mandatory remote branch deletion and base synchronization via post-merge hook.
 
+Run the post-merge hook:
 ```bash
-git checkout main && git pull origin main
-git branch -d <type>/issue-<id>-<slug>
-git push origin --delete <type>/issue-<id>-<slug>
-git fetch --prune
+./.agent/hooks/post-merge-dual-sync.sh <pr_number>
 ```
-Issue auto-closed by `Closes #<id>`. Kanban → `Done`.
+This hook dynamically switches to the target base branch (`epic/**` or `main`), pulls latest, and cleans local/remote branches. Issue auto-closed by `Closes #<id>`. Kanban → `Done`.
 
 ### Step 3.5 · Crashlytics Dual-Sync Closure (P6 — mandatory for `source:crashlytics`)
 

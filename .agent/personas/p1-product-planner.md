@@ -54,21 +54,15 @@ Before creating any work item:
 - **Closed issue = regression** → create new issue referencing `Regression of #<id>`.
 - **No match** → proceed to sealed issue creation.
 
-### 2. Sealed Issue Creation
-Issues are immutable upon creation (**Rule A — Append-Only**).
-```json
-{
-  "owner": "<owner>", "repo": "<repo>",
-  "title": "<type>(<scope>): <imperative description>",
-  "body": "<initial brief + placeholder for 4-Pillar Spec>",
-  "assignees": ["<owner>"],
-  "labels": ["<type_label>", "source:<origin>"]
-}
-```
-Set at creation and assigned on GitHub Projects v2:
+### 2. Just-In-Time (JIT) Issue Sealing
+Specifications are elaborated locally in `implementation_plan.md` (`issue: null`).
+Upon human written approval at Gate 1.4, P1 orchestrates atomic issue sealing via `./scripts/seal-issue.sh --from-plan`.
+Native flags and Project v2 metadata:
 - **Priority**: `P0` (Blocker/Fatal) · `P1` (Major) · `P2` (Minor)
-- **Estimate** (co-owned with P4): Numeric estimate in days or story points
-- **Status**: `Backlog`
+- **Estimate** (co-owned with P4): Numeric estimate in days or points
+- **Parent**: `--parent <epic_id>` if child task
+- **Milestone**: `--milestone "<milestone_name>"`
+- **Status**: `Ready`
 
 ### 3. Milestone & Cycle Scoping
 - Create and scope GitHub Milestones (release boundaries).

@@ -127,10 +127,7 @@ try {
     if (!opt) return;
 
     if (!dryRun) {
-      gql(
-        `mutation($p:ID!,$i:ID!,$f:ID!, $v:String!){updateProjectV2ItemFieldValue(input:{projectId:$p,itemId:$i,fieldId:$f,value:{singleSelectOptionId:$v}}){projectV2Item{id}}}`,
-        { p: project.id, i: itemId, f: f.id, v: opt.id }
-      );
+      runGh(`api graphql -f query='mutation { updateProjectV2ItemFieldValue(input: { projectId: "${project.id}", itemId: "${itemId}", fieldId: "${f.id}", value: { singleSelectOptionId: "${opt.id}" } }) { projectV2Item { id } } }'`);
     }
     results.updated.push({ field: f.name, value: opt.name });
   }

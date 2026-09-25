@@ -42,21 +42,24 @@ Configured on GitHub Projects v2 board. Revisions require an `add_issue_comment`
 
 ## 4. The 10 Golden Rules of Backlog Governance
 
-### 🚨 Rule 0 · No Branch or Code Without a GitHub Issue
+### 🚨 Rule 0 · JIT Issue Sealing (Gate 1.4 Hand-off)
 Every task (feature, bug, refactor, chore, docs) requires:
-1. A GitHub Issue created **before** any development starts.
-2. A dedicated `<type>/issue-<id>-<slug>` branch cut from up-to-date `main`.
-3. A 1:1 PR closing the issue (`Closes #<id>`).
+1. Inception and 4-Pillars elaborated locally in `implementation_plan.md` (`issue: null`).
+2. Sizing and estimation consolidated in Pillar 3 before Gate 1.4.
+3. Sealing via `./scripts/seal-issue.sh --from-plan` exclusively **after** user approval at Gate 1.4.
+4. Dedicated branch `<type>/issue-<id>-<slug>` cut from `main` or active Epic branch.
+5. A 1:1 PR closing the issue (`Closes #<id>`).
 
-> ⛔ **FORBIDDEN**: coding on `main`, creating a branch/PR without an Issue number.
+> ⛔ **FORBIDDEN**: coding on `main` or `epic/*`, creating a branch or premature GitHub stubs before Gate 1.4.
 
 ---
 
-### 🏛️ Rule 0.1 · Epic Gating (Size: L / XL)
+### 🏛️ Rule 0.1 · Epic Branch Isolation Protocol (Size: L / XL)
 Issues rated `Size: L` or `Size: XL` (or `Estimate >= 3d`) are classified as **Epics**.
-- **Zero Branch Guardrail**: Never branch or commit directly on an Epic issue.
-- **Sequential Decomposition**: P1 & P4 decompose Epics into atomic child issues (< 300 diff lines) referencing the parent (`parent: #<id>`), merged sequentially to `main` (Trunk-Based) using [`.agent/templates/epic-spec.md`](../templates/epic-spec.md).
-- **Silent Merges (`skip-release`)**: Intermediate child PRs carry `skip-release`.
+- **Integration Branch**: Upon sealing, an isolated branch `epic/issue-<id>-<slug>` is created from `origin/main`.
+- **Zero Direct Commits**: Committing or merging directly on `epic/**` is strictly forbidden.
+- **Sequential Child Tasks**: Decomposed into atomic child tasks (< 300 diff lines) with native `--parent <epic_id>`. Each child task runs its own JIT Inception, branches from and merges into `epic/**` with `skip-release`.
+- **Consolidated Release**: Once all child tasks merge into `epic/**`, a final PR targets `main`, closing the parent Epic and child issues.
 
 ---
 
@@ -85,30 +88,26 @@ Every Issue and PR must be assigned to `@me` at creation. No unowned tickets.
 
 ---
 
-### 📋 Rule 3 · Kanban Attachment & Milestone Linking
-**At `Backlog` creation**: Attach to project board and assign Priority, Size, Estimate, Status.
-**At `Ready` transition**: Link active Cycle and target Milestone:
-```bash
-gh issue edit <id> --milestone "<Milestone>"
-gh project item-edit <PROJECT> --owner @me --url "..." --field "Status" --value "Ready"
-```
+### 📋 Rule 3 · Kanban Attachment & Native Metadata
+Native metadata (`Priority`, `Size`, `Estimate`, `Status`) is managed on Project v2 via `sync-project-metadata.mjs` or `seal-issue.sh`. Narrative metadata is never mixed into issue bodies.
 Column lifecycle: `Backlog` → `Ready` → `In Progress` → `In Review` → `Done`.
 
 ---
 
 ### 📝 Rule 4 · Issue vs PR Separation & Dual-Write Pattern
-- **Issue**: hosts canonical 4-Pillar Plan via comment ([`.agent/templates/4-pillar-spec.md`](../templates/4-pillar-spec.md)).
+- **Issue**: hosts canonical 4-Pillar Plan ([`.agent/templates/4-pillar-spec.md`](../templates/4-pillar-spec.md)).
 - **Dual-Write**: spec is mirrored to local `implementation_plan.md` artifact at Gate 1.4 for Antigravity IDE harmony.
 - **PR**: hosts exclusively the Walkthrough ([`.agent/templates/pr-walkthrough.md`](../templates/pr-walkthrough.md)). Zero heredocs.
 
 ---
 
 ### 🌿 Rule 5 · Branch-First Isolation
+Cut branch from `main` or `epic/issue-<epic_id>-<slug>`:
 ```bash
-git checkout main && git pull origin main
+git checkout <base_branch> && git pull origin <base_branch>
 git checkout -b <type>/issue-<id>-<slug>
 ```
-**FORBIDDEN**: editing files on `main` or any generic branch before this sequence.
+**FORBIDDEN**: editing files on `main` or `epic/*` before cutting the branch.
 
 ---
 
@@ -163,26 +162,21 @@ All specifications adhere to [`.agent/templates/4-pillar-spec.md`](../templates/
 
 ---
 
-## 5. Inception Workflow (Chat-to-Issue)
+## 5. Inception Workflow (JIT Sealing)
 
 ```
 User Request
     │
     ▼ P1: Anti-duplication (GitHubMCP:search_issues)
     │
-    ▼ P1: Create sealed Issue + assign Priority/Estimate + link Milestone
+    ▼ P1/P4: Local 4-Pillars (implementation_plan.md, issue: null)
     │
-    ▼ P1: Kanban attachment (Backlog)
+    ▼ Gate 1.4: Strict halt for human written approval
     │
-    ├─▶ P2: Pillar 1 comment (Design Spec)
-    ├─▶ P3: Pillar 2 comment (Data & Privacy Spec)
-    └─▶ P4: Pillar 3 comment (Technical Blueprint) + assign Size/Estimate
+    ▼ JIT Sealing: ./scripts/seal-issue.sh --from-plan
+    │  (Native Milestone, Parent, Projects v2 Priority/Size/Estimate)
     │
-    ▼ P1: Cycle & Milestone linking → Kanban to Ready
-    │
-    ▼ User explicit approval (Rule 1.5 of agent-lifecycle.md)
-    │
-    ▼ Hand-off to Personas 5 & 6 (git-workflow.md)
+    ▼ Hand-off to P5 (Branch cut, WIP=1) & P6
 ```
 
 ---

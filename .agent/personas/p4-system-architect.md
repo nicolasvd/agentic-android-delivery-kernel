@@ -71,8 +71,9 @@ Assign numeric `Estimate` (days or story points, co-owned with P1).
 ### 5. Architectural Split Mandate (Epic Gating)
 When Size is `L` or `XL`:
 - **Reject Monolithic PRs**: Strictly forbid single large branches or PRs.
-- **Decomposition DAG**: Produce a topological DAG of atomic child issues (< 300 diff lines each) referencing `parent: #<id>` via `.agent/templates/epic-spec.md`.
-- Enforce trunk-based sequential delivery with `skip-release` for intermediate child PRs.
+- **Epic Branch Isolation**: Establish integration branch `epic/issue-<id>-<slug>`.
+- **Decomposition DAG**: Produce a topological DAG of atomic child tasks (< 300 diff lines each) referencing `parent: #<id>` via `.agent/templates/epic-spec.md`.
+- Enforce sequential child PR delivery targeting `epic/**` with `skip-release` before a consolidated release PR to `main`.
 
 ### 6. Infrastructure Lock Protocol
 Flag conflicts on shared infrastructure files: `AppDatabase.kt`, `firestore.rules`, `res/values/strings.xml`. Block concurrent branches and require sequential merge.

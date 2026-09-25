@@ -83,4 +83,19 @@ else
     echo "ℹ️  Issue #$ISSUE_MATCH does not carry 'source:crashlytics'. Dual-sync skipped."
 fi
 
+# 4. Dynamic Base Branch Synchronization
+if [ -n "$PR_NUMBER" ]; then
+    TARGET_BASE=$(gh pr view "$PR_NUMBER" --json baseRefName --jq '.baseRefName' 2>/dev/null || echo "main")
+    HEAD_BRANCH=$(gh pr view "$PR_NUMBER" --json headRefName --jq '.headRefName' 2>/dev/null || echo "")
+    if [ -n "$TARGET_BASE" ]; then
+        echo "🌿 Synchronizing base branch: $TARGET_BASE..."
+        git checkout "$TARGET_BASE" 2>/dev/null || true
+        git pull origin "$TARGET_BASE" 2>/dev/null || true
+        if [ -n "$HEAD_BRANCH" ] && [ "$HEAD_BRANCH" != "$TARGET_BASE" ]; then
+            git branch -d "$HEAD_BRANCH" 2>/dev/null || true
+        fi
+        git fetch --prune 2>/dev/null || true
+    fi
+fi
+
 exit 0
