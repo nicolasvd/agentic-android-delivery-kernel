@@ -14,16 +14,12 @@ on:
       tester_groups:
         description: "Firebase App Distribution tester groups (comma-separated)"
         required: false
-        default: "admin, testers"
+        default: "testers, dev"
         type: string
       milestone_version:
-        description: "Milestone version override (e.g. v1.0.0) — optional"
+        description: "Milestone version override (e.g. v1.0.0) — required for manual release"
         required: false
         type: string
-
-permissions:
-  contents: write
-  pull-requests: read
 
 concurrency:
   group: delivery-${{ github.event.pull_request.number || github.ref }}
@@ -33,6 +29,9 @@ jobs:
   quality-gate:
     name: Quality Gate & Sanity Checks
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
     outputs:
       skip_release: ${{ steps.check_skip.outputs.skip_release }}
       is_release_run: ${{ steps.check_skip.outputs.is_release_run }}
@@ -44,9 +43,16 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Resolve Milestone Context
+      - name: Resolve Milestone Context & Validate Dispatch Input
         id: resolve_milestone
         run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            INPUT_VER="${{ inputs.milestone_version }}"
+            if [ -n "$INPUT_VER" ] && ! echo "$INPUT_VER" | grep -qE '^v[0-9]+\.[0-9]+\.[0-9]+$'; then
+              echo "::error::milestone_version must match vX.Y.Z format. Given: '$INPUT_VER'"
+              exit 1
+            fi
+          fi
           TITLE="${{ github.event.milestone.title || inputs.milestone_version || '' }}"
           echo "milestone_title=$TITLE" >> "$GITHUB_OUTPUT"
           echo "ℹ️ Milestone context resolved: '$TITLE'"
@@ -66,6 +72,7 @@ jobs:
         uses: gradle/actions/setup-gradle@v4
         with:
           cache-cleanup: on-success
+          cache-read-only: ${{ github.event_name == 'pull_request' }}
 
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
@@ -144,6 +151,8 @@ jobs:
     needs: quality-gate
     if: needs.quality-gate.outputs.is_release_run == 'true' && needs.quality-gate.outputs.skip_release != 'true'
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     outputs:
       new_tag: ${{ steps.tag_version.outputs.new_tag }}
 
@@ -158,11 +167,19 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            INPUT_VER="${{ inputs.milestone_version }}"
+            if [ -z "$INPUT_VER" ] || ! echo "$INPUT_VER" | grep -qE '^v[0-9]+\.[0-9]+\.[0-9]+$'; then
+              echo "::error::workflow_dispatch release requires milestone_version matching vX.Y.Z format. Given: '$INPUT_VER'"
+              exit 1
+            fi
+          fi
+
           MILESTONE_TITLE="${{ needs.quality-gate.outputs.milestone_title }}"
           TAG_NAME=$(echo "$MILESTONE_TITLE" | grep -oE '^v[0-9]+\.[0-9]+\.[0-9]+' || echo "")
           
           if [ -z "$TAG_NAME" ]; then
-            RAW_VERSION=$(grep -oE 'versionName\s*=\s*"[^"]+"' app/build.gradle.kts | cut -d'"' -f2 || echo "0.4.0")
+            RAW_VERSION=$(grep -oE 'versionName\s*=\s*"[^"]+"' app/build.gradle.kts | cut -d'"' -f2 || node -e 'try{console.log(require("./kernel.config.json").project.version)}catch{console.log("1.0.0")}')
             TAG_NAME="v${RAW_VERSION}"
           fi
           
@@ -203,6 +220,8 @@ jobs:
     needs: [ quality-gate, semver-release ]
     if: needs.quality-gate.outputs.is_release_run == 'true' && needs.quality-gate.outputs.skip_release != 'true'
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
 
     steps:
       - name: Checkout repository
@@ -306,7 +325,7 @@ jobs:
       - name: Upload to Firebase App Distribution
         continue-on-error: true
         env:
-          FIREBASE_TESTER_GROUPS: ${{ inputs.tester_groups || 'admin, testers' }}
+          FIREBASE_TESTER_GROUPS: ${{ inputs.tester_groups || 'testers, dev' }}
           GOOGLE_APPLICATION_CREDENTIALS: "${{ github.workspace }}/service-account.json"
         run: |
           if [ ! -f "service-account.json" ] || [ ! -s "service-account.json" ]; then
