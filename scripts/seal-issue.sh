@@ -116,7 +116,9 @@ node -e '
   const formattedTitle = (scope && scope !== "core") ? `${type}(${scope}): ${cleanTitle}` : `${type}: ${cleanTitle}`;
   const slug = cleanTitle.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").substring(0, 40);
 
-  fs.writeFileSync(varsPath, `TYPE="${type}"\nSCOPE="${scope}"\nPARENT="${parent}"\nMILESTONE="${milestone}"\nPRIORITY="${priority}"\nSIZE="${size}"\nESTIMATE="${estimate}"\nFORMATTED_TITLE="${formattedTitle.replace(/"/g, "\\\"")}"\nSLUG="${slug}"\n`, "utf8");
+  const escapeBash = (str) => String(str).replace(/\\/g, "\\\\").replace(/"/g, "\\\"").replace(/`/g, "\\`").replace(/\$/g, "\\$");
+
+  fs.writeFileSync(varsPath, `TYPE="${escapeBash(type)}"\nSCOPE="${escapeBash(scope)}"\nPARENT="${escapeBash(parent)}"\nMILESTONE="${escapeBash(milestone)}"\nPRIORITY="${escapeBash(priority)}"\nSIZE="${escapeBash(size)}"\nESTIMATE="${escapeBash(estimate)}"\nFORMATTED_TITLE="${escapeBash(formattedTitle)}"\nSLUG="${escapeBash(slug)}"\n`, "utf8");
 
   let body = content.replace(/^---\s*\n[\s\S]*?\n---\s*\n/, "");
   body = body.split("\n").filter(line => {

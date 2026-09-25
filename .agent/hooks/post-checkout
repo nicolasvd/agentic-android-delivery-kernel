@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # ==============================================================================
-# Second Brain — Post-Checkout Issue Progress Sync Hook
+# Agentic Android Delivery Kernel — Post-Checkout Issue Progress Sync Hook
 # ==============================================================================
 # Automatically binds open Milestone, active Cycle, and transitions issue status
 # to "In Progress" on GitHub Project board when checking out an issue branch.
