@@ -44,7 +44,7 @@ flowchart LR
 3. **Phase 3 — Release (Persona 6)**:
    - Activates **Persona 6 (Release Manager)**: pushes branch and opens PR via `GitHubMCP:create_pull_request`.
    - PR targets `epic/**` with `skip-release` for intermediate child tasks; targets `main` for standalone or final consolidated Epic PRs.
-   - **Gate 3.5 — Zero Auto-Merge Lock**: Halts with PR link. Merges exclusively after explicit user confirmation (*"Tu peux merger"*).
+   - **Gate 3.5 — Zero Auto-Merge Lock**: Halts with PR link. Merges exclusively after explicit user confirmation (*"Tu peux merger"* / *"Approve merge"*).
    - Executes squash merge, runs `.agent/hooks/post-merge-dual-sync.sh` (dynamically synchronizing base branch), and prunes branches.
 
 ### 1.2 Conditional P2 Design Gate
@@ -52,7 +52,7 @@ flowchart LR
 Pillar 1 (Design Spec) enforcement is contextual and adaptive:
 - **UI & Composable Changes**: **Persona 2 (Design Lead)** must define Material 3 tokens (from `DESIGN.md`), 4-state UI matrix, and Roborazzi expectations.
 - **Non-UI Changes**: For backend, Room, CI/CD, scripts, or doc chores, Pillar 1 is explicitly marked: `N/A — No visual/UI changes`.
-- **Explicit User Override**: If prompt requests to skip design (*"skip design"*, *"sans design"*), P2 is immediately bypassed.
+- **Explicit User Override**: If prompt requests to skip design (*"skip design"* / *"sans design"*), P2 is immediately bypassed.
 
 ### 1.3 The 6 Engineering Personas — Delegation Matrix
 

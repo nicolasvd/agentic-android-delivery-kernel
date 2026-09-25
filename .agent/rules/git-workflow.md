@@ -31,7 +31,7 @@
 
 - **Zero Auto-Merge**:
   > [!CAUTION]
-  > The agent NEVER merges a PR without explicit user approval. Present the PR link and stop. Merge only after the user says *"Tu peux merger"* or equivalent.
+  > The agent NEVER merges a PR without explicit user approval. Present the PR link and stop. Merge only after the user says *"Tu peux merger"* / *"Approve merge"* or equivalent.
 
 - **One Branch per Task / Issue**: every modification begins with `<type>/issue-<id>-<slug>` cut from up-to-date `main`.
 
