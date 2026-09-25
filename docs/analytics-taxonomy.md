@@ -1,117 +1,130 @@
-# 📊 Taxonomie & Événements Analytics (Zero-PII & Privacy-First)
+# 📊 Zero-PII Analytics & Telemetry Taxonomy Contract
 
-Ce document formalise la structure, les événements et les paramètres de télémétrie de **Agentic Android Kernel**.
-
----
-
-## 🛡️ 1. Principes de Confidentialité & Éthique (Zero-PII)
-
-L'architecture de télémétrie de Agentic Android Kernel est conçue selon le principe strict du **Privacy by Design** :
-
-1. **Aucune Donnée Personnelle Identifiable (Zero-PII)** : Les titres de tâches, descriptions, noms propres, adresses emails et contenus saisis par l'utilisateur ne sont **jamais** envoyés dans les événements d'analytics.
-2. **Bucketing / Plages de Valeurs** : Toutes les longueurs de texte et les nombres d'éléments sont regroupés en intervalles discrets (ex: `1-20`, `21-50`, `51-100`, `100+`) pour éviter tout traçage indirect par empreinte textuelle.
-3. **Comportement Hors-Ligne & Robuste** : Si Firebase Analytics n'est pas initialisé ou en mode avion, le tracker encapsule les appels sans aucun crash ni blocage de l'UI (`FirebaseAnalyticsTracker`).
+This document formalizes the telemetry structure, event taxonomy, and privacy invariants for applications built on the **Agentic Android Delivery Kernel**.
 
 ---
 
-## 📈 2. Propriétés Utilisateur (User Properties)
+## 🛡️ 1. Privacy Principles & Ethics (Zero-PII)
 
-| Clé | Type | Exemples de Valeurs | Description |
+The telemetry architecture of the Agentic Android Delivery Kernel enforces a strict **Privacy by Design** foundation:
+
+1. **Zero Personally Identifiable Information (Zero-PII)**: User-generated content, free-form text, titles, notes, personal names, email addresses, and phone numbers are **strictly prohibited** in analytics event parameters.
+2. **Cardinality Control & Bucketing**: All textual lengths, item quantities, and durations must be grouped into discrete intervals (e.g., `1-10`, `11-20`, `21-50`, `50+` or `0`, `1-5`, `6-15`, `16-30`, `30+`) to eliminate indirect user fingerprinting.
+3. **Graceful Degradation & Offline Safety**: If the analytics provider is uninitialized, blocked by network configuration, or in airplane mode, the tracking layer safely encapsulates calls without causing runtime exceptions or blocking the main thread.
+
+---
+
+## 📈 2. Canonical User Properties
+
+User properties capture macro-level application state without storing individual behavioral profiles:
+
+| Property Key | Type | Example Values | Description |
 |---|---|---|---|
-| `access_state` | String | `guest`, `solo`, `duo` | État d'accès actuel (Invité, Connecté Solo, Jumelé en Duo). |
-| `theme_preference` | String | `light`, `dark`, `system` | Préférence de thème d'affichage. |
-| `is_partner_linked` | Boolean | `true`, `false` | Indique si le compte est jumelé à un partenaire. |
-| `active_loads_bucket` | String | `0`, `1-5`, `6-15`, `16-30`, `30+` | Tranche du nombre de charges mentales actives. |
-| `focus_streak_bucket` | String | `0`, `1-3`, `4-7`, `8-14`, `15-30`, `30+` | Série quotidienne de priorisation active. |
+| `access_state` | String | `guest`, `solo`, `duo` | Current access level within the 3-State Access Matrix. |
+| `theme_preference` | String | `light`, `dark`, `system` | Active UI theme preference. |
+| `account_link_state` | String | `anonymous`, `authenticated_solo`, `paired_shared` | Identity and authentication topology. |
+| `active_entities_bucket` | String | `0`, `1-5`, `6-15`, `16-30`, `30+` | Total volume of active domain entities managed by the user. |
+| `engagement_streak_bucket` | String | `0`, `1-3`, `4-7`, `8-14`, `15-30`, `30+` | Daily usage and prioritization streak interval. |
 
 ---
 
-## 🏷️ 3. Catalogue des Événements par Domaine Fonctionnel
+## 🏷️ 3. Event Taxonomy by Functional Domain
 
-### 🧠 A. Intelligence Artificielle & Classification Two-Tier (Issue #2)
+### 🧠 A. AI Assistance & Two-Tier Classification
 
-| Nom de l'Événement | Paramètres | Description |
+Telemetry events measuring the accuracy, latency, and user adoption of AI suggestions:
+
+| Event Name | Parameters | Description |
 |---|---|---|
-| `ai_classification_triggered` | `input_length_bucket` (String : `1-10`, `11-20`, `21-50`, `50+`)<br>`has_partner_context` (Boolean) | Déclenché lors de l'évaluation cognitive d'une tâche. |
-| `ai_quadrant_suggested` | `source` (String : `heuristic`, `gemini_flash`)<br>`suggested_quadrant` (String : `do_today`, `schedule`, `delegate`, `park`)<br>`suggested_area` (String : `self`, `home`, `work`)<br>`confidence_bucket` (String : `high`, `medium`, `low`) | Émis lorsqu'une suggestion de quadrant et de domaine de vie est présentée à l'utilisateur. |
-| `ai_quadrant_applied` | `quadrant` (String)<br>`area` (String)<br>`source` (String)<br>`time_to_apply_ms` (Long) | Enregistré lorsque l'utilisateur touche le chip de suggestion pour l'appliquer en 1-tap. |
-| `ai_quadrant_dismissed` | `suggested_quadrant` (String)<br>`manual_selected_quadrant` (String)<br>`suggested_area` (String, opt)<br>`manual_selected_area` (String, opt) | Enregistré lorsque l'utilisateur ignore ou remplace la suggestion IA par un choix manuel. |
+| `ai_classification_triggered` | `input_length_bucket` (String: `1-10`, `11-20`, `21-50`, `50+`)<br>`has_context` (Boolean) | Triggered when cognitive evaluation of an input starts. |
+| `ai_suggestion_presented` | `source` (String: `heuristic`, `cloud_llm`)<br>`suggested_category` (String)<br>`suggested_priority` (String)<br>`confidence_bucket` (String: `high`, `medium`, `low`) | Emitted when an AI recommendation is displayed in the UI. |
+| `ai_suggestion_applied` | `category` (String)<br>`priority` (String)<br>`source` (String)<br>`time_to_apply_ms` (Long) | Recorded when the user applies an AI suggestion with a 1-tap interaction. |
+| `ai_suggestion_dismissed` | `suggested_category` (String)<br>`manual_override_selected` (String)<br>`source` (String) | Recorded when the user dismisses or manually overrides the AI recommendation. |
 
 ---
 
-### 📝 B. Capture Rapide & Gestion des Charges Mentales
+### 📝 B. Entity Lifecycle & Data Operations
 
-| Nom de l'Événement | Paramètres | Description |
+Lifecycle events tracking the creation, mutation, and completion of domain entities:
+
+| Event Name | Parameters | Description |
 |---|---|---|
-| `quick_capture_submitted` | `char_count_bucket` (String : `1-20`, `21-50`, `51-100`, `100+`)<br>`has_details` (Boolean) | Soumission d'une pensée depuis la barre d'accueil. |
-| `mental_load_created` | `area` (String : `self`, `home`, `work`)<br>`quadrant` (String)<br>`is_shared` (Boolean)<br>`is_ai_assisted` (Boolean) | Création et sauvegarde d'une nouvelle charge mentale. |
-| `mental_load_updated` | `area` (String)<br>`quadrant` (String)<br>`is_shared` (Boolean)<br>`changed_quadrant` (Boolean)<br>`changed_area` (Boolean) | Mise à jour des propriétés d'une tâche existante. |
-| `mental_load_deleted` | `area` (String)<br>`quadrant` (String)<br>`was_completed` (Boolean)<br>`was_shared` (Boolean) | Suppression d'une charge mentale. |
-| `task_completed` | `area` (String)<br>`quadrant` (String)<br>`is_shared` (Boolean)<br>`is_voted_today` (Boolean) | Coche / complétion d'une tâche. |
-| `task_reopened` | `area` (String)<br>`quadrant` (String)<br>`is_shared` (Boolean) | Réouverture d'une tâche terminée. |
-| `task_filter_applied` | `filter_mode` (String : `all`, `shared`, `personal`, `top3`)<br>`results_count` (Int) | Application d'un filtre sur la liste des charges. |
+| `quick_capture_submitted` | `char_count_bucket` (String: `1-20`, `21-50`, `51-100`, `100+`)<br>`has_details` (Boolean) | Rapid thought or item capture from entry surfaces. |
+| `entity_created` | `category` (String)<br>`priority_tier` (String)<br>`is_shared` (Boolean)<br>`is_ai_assisted` (Boolean) | Creation and persistence of a new domain entity. |
+| `entity_updated` | `category` (String)<br>`changed_category` (Boolean)<br>`changed_priority` (Boolean)<br>`is_shared` (Boolean) | Mutation of existing entity attributes. |
+| `entity_deleted` | `category` (String)<br>`was_completed` (Boolean)<br>`was_shared` (Boolean) | Entity deletion from local or remote stores. |
+| `entity_completed` | `category` (String)<br>`priority_tier` (String)<br>`is_shared` (Boolean) | Marking an entity as resolved or completed. |
+| `entity_reopened` | `category` (String)<br>`is_shared` (Boolean) | Reopening a previously completed entity. |
+| `entity_filter_applied` | `filter_mode` (String: `all`, `shared`, `personal`, `priority`)<br>`results_count_bucket` (String) | Filtering entity lists or collection views. |
 
 ---
 
-### 🧭 C. Matrice d'Eisenhower & Priorisation Quotidienne
+### 🧭 C. Priority Matrix & Workflow State
 
-| Nom de l'Événement | Paramètres | Description |
+Events monitoring workflow state transitions and daily prioritization:
+
+| Event Name | Parameters | Description |
 |---|---|---|
-| `daily_vote_toggled` | `action` (String : `added`, `removed`)<br>`current_voted_count` (Int : `1` à `3`)<br>`area` (String)<br>`quadrant` (String) | Ajout ou retrait d'une tâche dans le Top 3 quotidien. |
-| `daily_vote_limit_reached` | `max_votes` (Int : `3`)<br>`active_loads_count` (Int) | Tentative de dépassement de la limite de 3 votes. |
-| `daily_votes_reset` | `previous_voted_count` (Int) | Réinitialisation quotidienne des votes Top 3. |
-| `quadrant_reassigned` | `previous_quadrant` (String, opt)<br>`target_quadrant` (String)<br>`area` (String) | Déplacement direct d'une tâche vers un autre quadrant. |
+| `priority_item_toggled` | `action` (String: `added`, `removed`)<br>`current_priority_count` (Int)<br>`category` (String) | Adding or removing an item from primary focus. |
+| `priority_limit_reached` | `max_limit` (Int)<br>`active_items_count` (Int) | User notification when attempting to exceed daily focus caps. |
+| `priority_batch_reset` | `previous_count` (Int) | Scheduled or manual reset of high-priority focus items. |
+| `workflow_state_reassigned` | `previous_state` (String, opt)<br>`target_state` (String)<br>`category` (String) | Moving an entity across workflow states or quadrants. |
 
 ---
 
-### 👫 D. Espace Duo & Jumelage Partenaire
+### 👫 D. Duo Collaboration & Real-Time Sync
 
-| Nom de l'Événement | Paramètres | Description |
+Telemetry covering shared state, pairing rituals, and collaborative interactions:
+
+| Event Name | Parameters | Description |
 |---|---|---|
-| `partner_invite_generated` | `is_regenerated` (Boolean) | Génération d'un code sanctuaire `SANCTUARY-XXXXXX`. |
-| `partner_join_attempted` | `code_format_valid` (Boolean) | Soumission d'un code d'invitation partenaire. |
-| `partner_paired_success` | `method` (String : `sanctuary_code`) | Jumelage réussi des deux profils. |
-| `partner_paired_failed` | `error_reason` (String) | Échec de jumelage (code invalide, déjà lié). |
-| `partner_unpaired` | `active_tasks_count` (Int) | Dissociation du partenaire. |
-| `partner_upvote_toggled` | `action` (String)<br>`area` (String)<br>`is_completed` (Boolean) | Vote de soutien/priorité sur une tâche partagée. |
-| `partner_ledger_viewed` | `active_dimension` (String)<br>`total_shared_tasks` (Int) | Consultation du Grand Livre de synergie. |
-| `partner_ledger_dim_changed`| `selected_dimension` (String : `active`, `initiated`, `resolved`)<br>`user_percentage` (Int)<br>`partner_percentage` (Int) | Bascule entre les 3 dimensions de charge du couple. |
-| `couple_synergy_viewed` | `focus_streak_days` (Int)<br>`total_completed_shared` (Int) | Ouverture de la modale de célébration de couple. |
-| `shared_privacy_updated` | `privacy_mode` (String) | Modification de la visibilité des tâches partagées. |
+| `pairing_invite_generated` | `is_regenerated` (Boolean) | Generating a secure pairing or invitation code. |
+| `pairing_join_attempted` | `code_format_valid` (Boolean) | Submitting an invitation code to join a shared workspace. |
+| `pairing_success` | `method` (String: `invite_code`, `qr`, `link`) | Successful establishment of a shared session. |
+| `pairing_failed` | `error_reason` (String) | Pairing error (expired token, mismatched version, already linked). |
+| `pairing_disconnected` | `active_shared_count` (Int) | Unlinking from a shared workspace. |
+| `collaborator_interaction` | `action` (String)<br>`category` (String)<br>`is_completed` (Boolean) | Collaborative action or support vote on a shared item. |
+| `shared_ledger_viewed` | `active_dimension` (String)<br>`total_shared_items` (Int) | Inspecting shared collaboration metrics or ledgers. |
+| `shared_privacy_updated` | `privacy_mode` (String) | Updating visibility or permission rules for shared data. |
 
 ---
 
-### 🔐 E. Authentification, Soft-Gating & Paramètres
+### 🔐 E. Authentication, Soft-Gating & System Settings
 
-| Nom de l'Événement | Paramètres | Description |
+Core system lifecycle, authentication flows, and accessibility preferences:
+
+| Event Name | Parameters | Description |
 |---|---|---|
-| `screen_view` | `screen_name` (String)<br>`screen_class` (String)<br>`access_state` (String)<br>`active_loads_count` (Int)<br>`voted_loads_count` (Int) | Navigation vers un écran. |
-| `sign_in_started` | `source` (String) | Déclenchement de la connexion Google. |
-| `sign_in_success` | *(aucun)* | Connexion réussie. |
-| `sign_in_failed` | `error_type` (String)<br>`error_message` (String) | Échec de connexion Google. |
-| `sign_out` | `previous_access_state` (String) | Déconnexion volontaire de l'utilisateur. |
-| `soft_gate_shown` | `trigger_feature` (String) | Affichage de la boîte de dialogue invitant à la connexion/jumelage. |
-| `theme_changed` | `new_theme` (String)<br>`previous_theme` (String, opt) | Changement du mode de thème (Clair / Sombre / Système). |
-| `gentle_reset_started` | `source` (String) | Lancement de la respiration guidée 4-4-4. |
-| `gentle_reset_completed` | `duration_seconds` (Int : `30`)<br>`current_streak` (Int) | Complétion d'une session de recentrage zen. |
+| `screen_view` | `screen_name` (String)<br>`screen_class` (String)<br>`access_state` (String)<br>`active_items_bucket` (String) | Screen navigation tracking. |
+| `sign_in_started` | `source` (String) | Initiating an authentication provider flow. |
+| `sign_in_success` | `provider` (String: `google`, `credential`) | Successful identity authentication. |
+| `sign_in_failed` | `error_type` (String)<br>`error_message` (String) | Authentication failure or cancellation. |
+| `sign_out` | `previous_access_state` (String) | User-initiated sign-out. |
+| `soft_gate_prompt_shown` | `trigger_feature` (String)<br>`target_state` (String) | Prompting an unauthenticated user to sign in or pair. |
+| `theme_changed` | `new_theme` (String)<br>`previous_theme` (String, opt) | Theme mode change (Light, Dark, System). |
 
 ---
 
-### 🔁 F. Récurrence, Échéances & Rotation Alternée Duo (Issue #1)
+### 🔁 F. Recurrence, Scheduling & Workload Rotation
 
-| Nom de l'Événement | Paramètres | Description |
+Events governing temporal rules, recurring schedules, and collaborative rotation:
+
+| Event Name | Parameters | Description |
 |---|---|---|
-| `task_due_date_set` | `is_preset` (Boolean)<br>`preset_type` (String, opt : `today`, `tomorrow`, `weekend`, `next_week`)<br>`is_recurring` (Boolean)<br>`days_until_due` (Int, opt) | Définition ou sélection rapide d'une échéance temporelle sur une charge mentale. |
-| `recurring_task_created` | `frequency` (String : `daily`, `weekdays_only`, `weekends_only`, `weekly`, `biweekly`, `monthly`, `yearly`)<br>`is_duo_rotating` (Boolean)<br>`has_due_date` (Boolean)<br>`area` (String) | Création d'une tâche récurrente ou périodique. |
-| `recurring_task_completed` | `frequency` (String)<br>`cycle_count` (Int)<br>`is_duo_rotating` (Boolean)<br>`has_due_date` (Boolean) | Complétion d'un cycle de tâche récurrente et déclenchement automatique du cycle suivant. |
-| `duo_rotation_assigned` | `frequency` (String)<br>`cycle_count` (Int)<br>`next_assignee_role` (String : `partner`, `self`)<br>`days_to_next_due` (Int, opt) | Alternance automatique du responsable de la tâche pour le cycle suivant. |
+| `entity_due_date_set` | `is_preset` (Boolean)<br>`preset_type` (String, opt)<br>`is_recurring` (Boolean)<br>`days_until_due_bucket` (String, opt) | Setting a deadline or due date on an entity. |
+| `recurring_rule_created` | `frequency` (String: `daily`, `weekly`, `monthly`, `custom`)<br>`is_shared_rotating` (Boolean)<br>`category` (String) | Creating an automated recurrence schedule. |
+| `recurring_cycle_completed` | `frequency` (String)<br>`cycle_count` (Int)<br>`is_shared_rotating` (Boolean) | Completing a cycle and generating the next scheduled instance. |
+| `rotation_assigned` | `frequency` (String)<br>`cycle_count` (Int)<br>`next_assignee_role` (String: `partner`, `self`, `team`) | Automatic rotation of responsibility across collaborators. |
 
 ---
 
-## 🧪 4. Validation & Tests Automatisés
+## 🧪 4. Automated Verification
 
-Tous les événements et leurs sérialisations de paramètres sont validés dans les tests unitaires :
+All analytics events and parameter bundle builders must be validated with unit tests verifying:
+1. Zero PII parameter keys and value formats.
+2. Proper bucketing of numeric and length inputs.
+3. Safe execution when analytics dependencies are mocked or disabled.
 
 ```bash
-./gradlew testDebugUnitTest --tests com.secondbrain.app.data.analytics.AnalyticsTrackerTest
+./gradlew testDebugUnitTest --tests "*AnalyticsTrackerTest*"
 ```

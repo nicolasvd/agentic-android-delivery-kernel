@@ -1,116 +1,128 @@
-# 🧠 Guide de Test & Référentiel de Classification IA (Matrice de Clarté & Domaines de Vie)
+# 🧠 QA Test Guide & Two-Tier AI Verification Reference
 
-Ce document détaille la philosophie de gestion cognitive de **Agentic Android Kernel**, le comportement du moteur hybride **Two-Tier (Heuristique locale + Gemini Flash-Lite)**, ainsi que la **matrice de test exhaustive (les 12 combinaisons)** pour valider les suggestions de quadrants et de domaines de vie.
-
----
-
-## 🌿 1. Philosophie & Vocabulaire Émotionnel Positif
-
-Agentic Android Kernel applique les principes de la **Matrice d'Eisenhower** et de la méthode **GTD (Getting Things Done)**, réinterprétés à travers une approche apaisante (*Serene UX*) :
-
-* **Zéro Stress / Non-injonction** : L'interface évite les termes anxiogènes.
-* **Entraide Duo** : Le terme traditionnel *"Déléguer"* est remplacé par **« Entraide Duo »** et **« À proposer au partenaire »** (*Duo Teamwork / Propose to partner*), valorisant l'interdépendance positive et l'allègement partagé de la charge mentale.
-* **Sanctuaire Mental** : Le quadrant *"Éliminer / Ne pas faire"* est remplacé par **« Déposer au Sanctuaire »** (*Park in Sanctuary*), permettant de consigner une idée précieuse sans s'imposer d'échéance ni culpabilité.
+This document establishes the quality assurance standards, defect classification matrix, and verification protocols for applications powered by the **Agentic Android Delivery Kernel**, with emphasis on the **Two-Tier Hybrid AI Architecture (Local Heuristics + Cloud LLM)** and the **3-State Access Matrix**.
 
 ---
 
-## 🧭 2. Les 4 Quadrants de la Matrice de Clarté
+## 🚦 1. Defect Severity & Classification Matrix
+
+Persona 6 (Release Manager) and QA engineers qualify all anomalies and regressions using three standard severity tiers:
+
+| Severity | Criteria | Impact | SLA / Resolution Path |
+|---|---|---|---|
+| **P0 · Blocker** | Application crash on launch, fatal exception, database migration corruption, security bypass, or broken primary user flow. | Total blockage or data loss. | Immediate triage, circuit breaker halted, hotfix release. |
+| **P1 · Major** | Functional flow regression without viable workaround, sync failure in Duo state, authentication loop, or AI suggestion failure with no local fallback. | Degraded core functionality. | Blocking for milestone release train; fixed in active sprint. |
+| **P2 · Minor** | Visual glitch, theme token misalignment, animation stutter, minor localization typo, or non-blocking edge-case delay. | Cosmetic or low friction. | Scheduled in standard backlog sprint. |
+
+### 🔍 Bug Report Qualification Checklist
+Before submitting a defect, verify:
+1. **Deterministic Steps to Reproduce**: Minimal step-by-step sequence from a clean application state.
+2. **Environment Specification**: Device model, Android OS version / API level, and build variant (`debug` vs `release`).
+3. **Behavioral Contrast**: Clear statement of Expected Behavior vs Actual Observed Behavior.
+4. **Logcat / Stacktrace**: Clean log snippet isolated to application process, sanitized of any PII.
+
+---
+
+## 🧭 2. 3-State Access Matrix QA Protocols
+
+Every feature and data flow must be verified across the 3 fundamental access states:
 
 ```
-                       URGENT (Court Terme)                  NON-URGENT (Long Terme)
-                 ┌───────────────────────────────────┬───────────────────────────────────┐
-                 │  ⚡ À FAIRE AUJOURD'HUI           │  🌿 PLANIFIER & ALIGNER           │
-  IMPORTANT      │  • Haute urgence & Fort impact    │  • Fort impact, sérénité          │
- (Haute Valeur)  │  • Échéance imminente (ce soir)   │  • Projets structurants, Self-care│
-                 ├───────────────────────────────────┼───────────────────────────────────┤
-                 │  🤝 ENTRAIDE DUO                  │  🍃 DÉPOSER AU SANCTUAIRE         │
- NON-IMPORTANT   │  • Urgent, faible complexité      │  • Faible urgence & faible impact │
-(Faible Charge)  │  • À proposer au partenaire       │  • Idée pour plus tard, Wishlist  │
-                 └───────────────────────────────────┴───────────────────────────────────┘
+               ┌────────────────────────────────────────────────────────┐
+               │              3-STATE ACCESS ARCHITECTURE               │
+               └────────────────────────────────────────────────────────┘
+                       │                     │                     │
+                       ▼                     ▼                     ▼
+               ┌───────────────┐     ┌───────────────┐     ┌───────────────┐
+               │  GUEST STATE  │     │  SOLO STATE   │     │   DUO STATE   │
+               │  100% Local   │     │ Personal Cloud│     │ Shared Sync   │
+               └───────────────┘     └───────────────┘     └───────────────┘
 ```
 
-### 🔍 Focus : "Planifier & Aligner" vs "Déposer au Sanctuaire"
+### A. Guest State (Unauthenticated / Offline)
+* **Storage Invariant**: 100% local persistence via Room SQLite.
+* **Network Invariant**: Zero unsolicited cloud database or storage network requests.
+* **Soft-Gating**: Attempting to access cloud synchronization or partner pairing triggers a gentle non-blocking sign-in dialogue without crashing.
 
-Une distinction fondamentale existe entre ces deux catégories :
+### B. Solo State (Authenticated User)
+* **Namespace Isolation**: Reads and writes are scoped strictly to the authenticated user's private cloud namespace (e.g., `/users/{userId}`).
+* **Telemetry & Settings**: User preferences, theme modes, and Zero-PII analytics operate in personal mode.
 
-1. **🌿 Planifier & Aligner (`SCHEDULE` - Quadrant II)** :
-   * C'est le **« Quadrant d'or »** de l'efficacité et de la sérénité.
-   * Il regroupe les actions fondamentales qui méritent une attention délibérée mais sans panique : bilans de santé, intentions de vie, roadmap stratégique et **self-care actif**.
-   * 👉 *Exemple :* **« Prendre du temps pour moi »** ou **« Prendre rendez-vous médecin »** sont classés ici car prendre soin de son équilibre est une intention **importante** qui doit être planifiée calmement.
-
-2. **🍃 Déposer au Sanctuaire (`PARK` - Quadrant IV / Someday-Maybe)** :
-   * C'est l'espace pour **libérer son esprit** des pensées sans engagement immédiat.
-   * Il accueille les envies d'exploration, curiosités, wishlists ou projets lointains qu'on veut stocker en lieu sûr sans encombrer son champ attentionnel du moment.
-   * 👉 *Exemple :* **« Idée pour plus tard : tester le yoga aérien un jour »** ou **« Un jour apprendre à jouer du piano »**.
-
----
-
-## 🏷️ 3. Les 3 Domaines de Vie (Areas of Life)
-
-1. **🧘 Pour Soi (`SELF`)** : Santé, médecine préventive, forme physique, sommeil, méditation, bien-être, loisirs personnels et déconnexion.
-2. **🏡 Maison (`HOME`)** : Logement, entretien intérieur/extérieur, jardinage, bricolage, courses, repas, animaux de compagnie, enfants et logistique familiale.
-3. **💼 Travail (`WORK`)** : Activité professionnelle, gestion de projets, réunions, fiscalité/comptabilité, clients, devis, contrats et stratégie.
+### C. Duo State (Shared Collaboration)
+* **Shared Workspace**: Real-time bidirectional synchronization scoped to the shared workspace namespace.
+* **Concurrency & Conflicts**: Verified using 2 simultaneous test devices/emulators to validate conflict resolution.
+* **Pairing Lifecycle**: Complete end-to-end verification of pairing generation, code submission, active sync, and clean disconnection.
 
 ---
 
-## ⚡ 4. Architecture Hybride Two-Tier
+## ⚡ 3. Two-Tier Hybrid AI Engine Architecture
 
-1. **Tier 1 — Heuristique Locale (`< 5ms`)** :
-   * Analyse déterministe synchrone instantanée avec 0 ms de latence réseau.
-   * Tokenisation Unicode stricte (`\p{L}`) pour gérer nativement les accents français (*impôts*, *santé*, *médecin*) sans faux positifs sur les sous-chaînes.
-   * Suggère immédiatement le Quadrant et le Domaine de Vie.
+Applications leveraging the kernel's cognitive assistance implement a Two-Tier hybrid model ensuring high availability, zero latency, and graceful offline degradation:
 
-2. **Tier 2 — Gemini 3.5 Flash-Lite via Firebase AI Logic (Asynchrone)** :
-   * Déclenché après une pause de frappe (debounce de 400ms) ou à la perte de focus.
-   * Utilise le modèle `gemini-3.5-flash-lite` via `com.google.firebase:firebase-ai` avec App Check (Play Integrity en production, `DebugAppCheckProvider` sur émulateur).
-   * Évalue la complexité cognitive, affine le domaine de vie (`HOME`, `WORK`, `SELF`), enrichit l'explication bienveillante (*rationale*) et ajuste la confiance.
-   * **Résilience App Check Émulateur** : Si le jeton de debug n'est pas whitelisté en environnement local, l'erreur 403 est interceptée sans polluer Crashlytics, et le Tier 1 heuristique garantit une classification instantanée et ininterrompue.
+```mermaid
+flowchart TD
+    Input[User Text Input] --> Tier1[Tier 1: Local Heuristic Engine]
+    Tier1 -->|< 5ms Latency| FastUI[Instant Suggestion Rendered]
+    Input -->|Debounce 400ms| Tier2[Tier 2: Cloud LLM / Gemini API]
+    Tier2 -->|App Check OK| RefinedUI[Enriched Rationale & Confidence]
+    Tier2 -->|Network Error / 403| Graceful[Silent Fallback: Keep Tier 1 Suggestion]
+```
 
----
+### Tier 1 — Local Deterministic Classifier (`< 5ms`)
+* **Instant Feedback**: Executes synchronously on the main/background thread with 0 ms network overhead.
+* **Deterministic Tokenization**: Strict Unicode boundary matching (`\p{L}`) handling accents and multilingual tokens without substring false positives.
+* **Guaranteed Fallback**: Always provides an initial category/priority recommendation regardless of connectivity.
 
-## 📋 5. Matrice de Test Complète (Les 12 Combinaisons)
-
-Ce tableau fournit les phrases de test canoniques pour valider les 12 combinaisons possibles dans l'interface de saisie (`AddMentalLoadScreen.kt` et `EditMentalLoadSheet.kt`).
-
-### 🧘 Domaines : Pour Soi (`SELF`)
-
-| # | Quadrant Attendu | Phrase de Test à Copier-Coller | Déclencheurs / Justification |
-|:---:|---|---|---|
-| **1** | ⚡ **À Faire Aujourd'hui** | `Prendre mes antibiotiques et appeler médecin en urgence aujourd'hui` | `urgence`, `aujourd'hui` + `santé`, `médecin` |
-| **2** | 🌿 **Planifier & Aligner** | `Prendre rendez-vous bilan de santé médecin` *(ou `Prendre du temps pour moi`)* | `santé`, `médecin`, `rdv`, `temps pour moi` (sans marqueur d'urgence) |
-| **3** | 🤝 **Entraide Duo** | `Demander à Sam de passer à la pharmacie chercher mon ordonnance` | `demander à Sam` + `pharmacie`, `ordonnance` |
-| **4** | 🍃 **Déposer au Sanctuaire** | `Idée pour plus tard : tester le yoga aérien un jour` | `idée pour plus tard`, `un jour` + `yoga` |
+### Tier 2 — Cloud LLM Inference (Gemini Flash via Firebase AI Logic)
+* **Asynchronous Deep Reasoning**: Triggered with debounce (e.g., 400ms after user pauses typing or loses focus).
+* **Structured Output Parsing**: Enforces strict schema validation (JSON / Type-safe response) to prevent hallucinated keys or unparseable payloads.
+* **App Check Security**: Enforces Play Integrity in production and debug providers in local test environments.
+* **Resilience Guarantee**: If network fails, API limits are reached, or App Check returns HTTP 403 on emulators, errors are intercepted cleanly. The Tier 1 local suggestion remains active, and Crashlytics is not spammed.
 
 ---
 
-### 🏡 Domaines : Maison (`HOME`)
+## 📋 4. Archetype AI Suggestion & Multi-Category Test Protocol
 
-| # | Quadrant Attendu | Phrase de Test à Copier-Coller | Déclencheurs / Justification |
-|:---:|---|---|---|
-| **5** | ⚡ **À Faire Aujourd'hui** | `Sortir les poubelles et réparer la fuite d'eau ce soir urgent` | `urgent`, `ce soir` + `poubelles`, `fuite`, `eau` |
-| **6** | 🌿 **Planifier & Aligner** | `Tailler la haie et tondre la pelouse ce week-end` | `tailler`, `haie`, `tondre`, `pelouse` |
-| **7** | 🤝 **Entraide Duo** | `Demander à Sam de faire les courses et acheter du lait` | `demander à Sam` + `courses`, `lait` |
-| **8** | 🍃 **Déposer au Sanctuaire** | `Idée pour plus tard : créer un potager dans le jardin` | `idée pour plus tard` + `jardin`, `potager` |
+Rather than testing arbitrary domain strings, QA suites should validate the **Architectural Qualification Grid** covering the full permutation of categories and priority tiers:
+
+| Dimension | Qualification Criteria | Expected Engine Behavior |
+|---|---|---|
+| **Urgent & High Impact** | Immediate deadline, high-risk consequence, crisis action. | Tier 1 & Tier 2 converge on highest immediate priority tier. |
+| **Important & Strategic** | Long-term planning, foundational projects, preventive actions. | Classified as scheduled/deliberate action without panic markers. |
+| **Collaborative / Shared** | Explicit mention of collaborator, delegation, or joint responsibility. | Routed to shared/collaborative workspace or partner suggestion. |
+| **Low-Urgency / Backlog** | Exploratory thoughts, wishlists, future ideas (*"someday-maybe"*). | Parked in low-priority sanctuary/backlog without deadlines. |
+
+### Golden Test Dataset Pattern
+Deterministic unit tests validate the classification engine using parameterized golden datasets:
+
+```kotlin
+@Test
+fun verifyCategoryAndPriorityPermutations() {
+    // Assert all permutations of category and priority tiers map correctly
+    // across both Tier 1 heuristic triggers and Tier 2 structured responses.
+}
+```
+
+### Roborazzi Visual Regression UI States
+Visual snapshot tests must capture the 4 canonical states of AI-assisted entry surfaces:
+1. **Empty / Default State**: Unfocused input with placeholder.
+2. **Typing / Tier 1 Fast State**: Instant suggestion chip displayed under input.
+3. **Tier 2 Enriched State**: Refined suggestion with rationale and confidence indicator.
+4. **Offline / Error Fallback**: Clean UI maintaining Tier 1 suggestion with zero error dialogs.
 
 ---
 
-### 💼 Domaines : Travail (`WORK`)
+## 🧪 5. Automated Testing Execution & CI Verification
 
-| # | Quadrant Attendu | Phrase de Test à Copier-Coller | Déclencheurs / Justification |
-|:---:|---|---|---|
-| **9** | ⚡ **À Faire Aujourd'hui** | `Déclaration impôts urgente aujourd'hui avant 18h` | `urgente`, `aujourd'hui`, `avant 18h` + `impôts`, `déclaration` |
-| **10** | 🌿 **Planifier & Aligner** | `Préparer la roadmap stratégique du projet Q4` | `roadmap`, `stratégique`, `projet`, `q4` |
-| **11** | 🤝 **Entraide Duo** | `Demander à Sam de relire le devis et le contrat` | `demander à Sam` + `devis`, `contrat` |
-| **12** | 🍃 **Déposer au Sanctuaire** | `Idée pour plus tard : explorer un projet open source un jour` | `idée pour plus tard`, `explorer`, `un jour` + `projet` |
-
----
-
-## 🧪 6. Vérification Automatisée
-
-La suite de tests unitaires valide l'intégralité de ces règles :
+Run the complete verification pipeline locally:
 
 ```bash
-./gradlew testDebugUnitTest --tests com.secondbrain.app.data.classifier.HeuristicTaskClassifierTest
-```
+# 1. Run unit test suite
+./gradlew testDebugUnitTest --tests "*ClassifierTest*"
 
-Test validé : `verify all 12 combinations of AreaOfLife and PriorityQuadrant` dans `HeuristicTaskClassifierTest.kt`.
+# 2. Run full quality airbag (Lint, compilation, tests)
+./scripts/quality-check.sh
+
+# 3. Validate documentation contracts and byte budgets
+./scripts/validate-docs.sh
+```

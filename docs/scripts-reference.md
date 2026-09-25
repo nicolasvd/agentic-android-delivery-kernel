@@ -6,41 +6,40 @@
 
 ---
 
-## 1. Vision & Architecture : Scripts Atomiques & Composition par Compétences Sémantiques
+## 1. Vision & Architecture: Atomic Scripts & Semantic Skills Composition
 
-Le projet **Agentic Android Kernel** adopte une architecture d'automatisation stricte basée sur le principe de **responsabilité unique (SRP)** :
+The **Agentic Android Kernel** project enforces a strict automation architecture rooted in the **Single Responsibility Principle (SRP)**:
 
-1. **Scripts Atomiques (Single Responsibility)** :
-   Chaque script dans `scripts/` remplit une **unique fonction déterministe** (ex: valider les contrats documentaires, exécuter les tests de compilation Android, vérifier les règles Firestore, ou téléverser les captures sur Stitch).
-2. **Composition par Compétences Sémantiques & Pipelines (Orchestration)** :
-   Les enchaînements complexes de tâches ne sont pas codés en dur dans de gros scripts monolithiques, mais orchestrés via :
-   - Les **Compétences Sémantiques de l'Agent** ([`.agent/skills/`](../.agent/skills/)) pilotées par intentions et commandes (`plan-issue`, `open-pr`, `quality-airbag`, `distribute-local`, `sync-stitch`, `triage-feedback`).
-   - Les **Pipelines CI/CD GitHub Actions** ([`.github/workflows/`](../.github/workflows/)) (`delivery-pipeline.yml`).
+1. **Atomic Scripts (Single Responsibility)**:
+   Every script under `scripts/` fulfills a **single deterministic function** (e.g., validating documentation contracts, running Android build sanity checks, testing runtime security guardrails, or uploading screenshots to Stitch).
+2. **Composition via Semantic Skills & Pipelines (Orchestration)**:
+   Complex multi-step workflows are not hardcoded into brittle monolithic scripts, but orchestrated via:
+   - **Agent Semantic Skills** ([`.agent/skills/`](../.agent/skills/)) driven by user intents and slash commands (`plan-issue`, `open-pr`, `quality-airbag`, `distribute-local`, `sync-stitch`, `triage-feedback`).
+   - **GitHub Actions CI/CD Pipelines** ([`.github/workflows/`](../.github/workflows/)) (`delivery-pipeline.yml`).
 
 ```mermaid
 graph TD
-    subgraph SkillsPipelines ["Orchestrateurs (Skills / Pipelines)"]
+    subgraph SkillsPipelines ["Orchestrators (Skills / Pipelines)"]
         WF_QC["quality-airbag (/quality-check)"]
         WF_DIST["/distribute-local"]
         WF_STITCH["/sync-stitch"]
         CI_DELIVERY["Delivery Pipeline & Quality Gate (delivery-pipeline.yml)"]
     end
 
-    subgraph AtomicScripts ["Scripts Atomiques (scripts/)"]
+    subgraph AtomicScripts ["Atomic Scripts (scripts/)"]
         S_VAL["validate-docs.sh"]
         S_QC["quality-check.sh"]
-        S_RULES["test-firestore-rules.mjs"]
-        S_DEPLOY["deploy-firestore-rules.mjs"]
+        S_GUARD["test-runtime-guardrails.mjs"]
+        S_HOOKS["install-hooks.sh"]
         S_DIST["deploy-app-distribution.sh"]
         S_GEN["generate-screenshots.sh"]
         S_STITCH["upload-screenshots.py"]
-        S_CLEAN["cleanup-e2e-firestore.mjs"]
         S_IDE["inspect-ide.sh"]
     end
 
     WF_QC --> S_VAL
     WF_QC --> S_QC
-    WF_QC --> S_RULES
+    WF_QC --> S_GUARD
 
     WF_STITCH --> S_VAL
     WF_STITCH --> S_GEN
@@ -51,130 +50,128 @@ graph TD
 
     CI_DELIVERY --> S_VAL
     CI_DELIVERY --> S_QC
-    CI_DELIVERY --> S_RULES
+    CI_DELIVERY --> S_GUARD
 ```
 
 ---
 
-## 2. Répertoire Complet des Scripts
+## 2. Complete Scripts Directory
 
-| Fichier Script | Langage | Nature | Responsabilité Unique | Déclencheurs / Skills |
+| Script File | Language | Nature | Single Responsibility | Triggers / Skills |
 |---|---|---|---|---|
-| [`scripts/validate-docs.sh`](../scripts/validate-docs.sh) | Bash | Atomique | Valide l'intégrité et la conformité des contrats documentaires (`DESIGN.md`, `design-system.md`, `agent.md`, playbooks, skills, règles). | `quality-airbag`, `sync-stitch`, `delivery-pipeline.yml` |
-| [`scripts/quality-check.sh`](../scripts/quality-check.sh) | Bash | Atomique | Exécute la suite Gradle complète de compilation Kotlin/Java, Lint Android Debug/Release, et tests unitaires/Robolectric. | `quality-airbag`, `open-pr`, `delivery-pipeline.yml` |
-| [`scripts/test-firestore-rules.mjs`](../scripts/test-firestore-rules.mjs) | Node.js (ESM) | Atomique | Teste localement `firestore.rules` contre 16 assertions de sécurité (moindre privilège, isolation couple, absence d'escalade). | `quality-airbag`, CI, Debug Screen |
-| [`scripts/deploy-firestore-rules.mjs`](../scripts/deploy-firestore-rules.mjs) | Node.js (ESM) | Atomique | Déploie et publie `firestore.rules` directement sur Google Cloud / Firebase via l'API REST avec JWT compte de service. | Déploiement manuel sécurisé |
-| [`scripts/deploy-app-distribution.sh`](../scripts/deploy-app-distribution.sh) | Bash | Atomique | Compile l'APK et l'envoie sur Firebase App Distribution avec calcul automatique de version et notes formatées. | `distribute-local`, Déploiement testeurs ad-hoc |
-| [`scripts/generate-screenshots.sh`](../scripts/generate-screenshots.sh) | Bash | Atomique | Exécute les tests d'UI Robolectric/Roborazzi pour générer ou mettre à jour les captures d'écran en local. | `sync-stitch`, Génération des captures Roborazzi |
-| [`scripts/upload-screenshots.py`](../scripts/upload-screenshots.py) | Python 3 | Atomique | Valide et mappe les 10 captures Roborazzi sur les `screen_id` Stitch existants pour mise à jour in-place (zéro hallucination). | `sync-stitch`, `upload-screenshots.py` |
-| [`scripts/cleanup-e2e-firestore.mjs`](../scripts/cleanup-e2e-firestore.mjs) | Node.js (ESM) | Atomique | Purge les documents de sondes de test créés dans la collection Firestore `/users`. | Maintenance et tests de sonde |
-| [`scripts/inspect-ide.sh`](../scripts/inspect-ide.sh) | Bash | Atomique | Exécute le moteur d'inspection complet d'Android Studio / IntelliJ en mode headless avec profil par défaut. | Audit qualité avancé IDE |
+| [`scripts/validate-docs.sh`](../scripts/validate-docs.sh) | Bash | Atomic | Validates structural integrity and byte budget compliance across all architecture contracts (`DESIGN.md`, `design-system.md`, `AGENTS.md`, playbooks, skills, rules). | `quality-airbag`, `sync-stitch`, `delivery-pipeline.yml` |
+| [`scripts/quality-check.sh`](../scripts/quality-check.sh) | Bash | Atomic | Executes the full Gradle suite: Kotlin/Java compilation, Android Lint Debug/Release, unit tests, and Robolectric/Roborazzi UI tests. | `quality-airbag`, `open-pr`, `delivery-pipeline.yml` |
+| [`scripts/test-runtime-guardrails.mjs`](../scripts/test-runtime-guardrails.mjs) | Node.js (ESM) | Atomic | Runs 18 security assertions verifying PoLP tool revocation, `plan-guard.mjs`, and `branch-guard.mjs` path hardening. | `quality-airbag`, CI |
+| [`scripts/install-hooks.sh`](../scripts/install-hooks.sh) | Bash | Atomic | Binds local Git hooks to `.agent/hooks/` and guarantees executable permissions on all hook scripts. | Developer onboarding, setup |
+| [`scripts/deploy-app-distribution.sh`](../scripts/deploy-app-distribution.sh) | Bash | Atomic | Builds the APK and deploys to Firebase App Distribution with monotonic version multiplier (x100) and formatted release notes. | `distribute-local`, Ad-hoc tester release |
+| [`scripts/generate-screenshots.sh`](../scripts/generate-screenshots.sh) | Bash | Atomic | Executes Robolectric/Roborazzi UI tests to record and generate local screenshots in `build/outputs/roborazzi`. | `sync-stitch`, Design System capture update |
+| [`scripts/upload-screenshots.py`](../scripts/upload-screenshots.py) | Python 3 | Atomic | Validates and maps Roborazzi screenshot baselines to Google Stitch `screen_id`s for in-place synchronization. | `sync-stitch`, `upload-screenshots.py` |
+| [`scripts/inspect-ide.sh`](../scripts/inspect-ide.sh) | Bash | Atomic | Executes Android Studio / IntelliJ IDEA code inspection engine in headless mode with default project profiles. | Advanced IDE quality audit |
 
 ---
 
-## 3. Fiches Détaillées par Script
+## 3. Detailed Script Reference Sheets
 
 ### 3.1 `scripts/validate-docs.sh`
-* **Rôle** : Gardien de l'intégrité documentaire et de la conformité des contrats d'architecture.
-* **Vérifications effectuées** :
-  - Présence de `DESIGN.md`, `design-system.md`, `agent.md`, `README.md`, `README.fr.md`.
-  - Présence des règles maîtresses : `agent-lifecycle.md`, `backlog-planner.md`, `git-workflow.md`.
-  - Présence des playbooks : `room-migrations.md`, `firestore-security.md`, `roborazzi-export.md`, `compose-theming.md`.
-  - Présence des compétences sémantiques : `plan-issue.md`, `open-pr.md`, `quality-airbag.md`, `distribute-local.md`, `triage-feedback.md`, `sync-stitch.md`.
-  - Validité du frontmatter YAML dans `DESIGN.md` (`Serene Intellectual`).
-* **Utilisation** :
+* **Role**: Quality gatekeeper for documentation integrity and multi-agent architectural contract compliance.
+* **Checks performed**:
+  - Presence of core contracts: `DESIGN.md`, `design-system.md`, `AGENTS.md`, `agent.md`, `README.md`, `ARCHITECTURE.md`.
+  - Presence and size budgets of master rules: `agent-lifecycle.md`, `backlog-planner.md`, `git-workflow.md`, `firebase-standards.md`.
+  - Presence and size budgets of playbooks: `room-migrations.md`, `roborazzi-export.md`, `compose-theming.md`, `android-standards.md`.
+  - Presence of semantic skills: `plan-issue`, `open-pr`, `quality-airbag`, `sync-stitch`.
+  - Presence and executable flags on hooks: `pre-commit-airbag.sh`, `post-merge-dual-sync.sh`, `branch-guard.mjs`, `plan-guard.mjs`, `pre-invocation-anchor.sh`.
+  - YAML frontmatter validity in `DESIGN.md` (`Serene Intellectual`).
+* **Usage**:
   ```bash
   ./scripts/validate-docs.sh
   ```
-* **Codes de sortie** : `0` (Succès, 100% validé), `1` (Échec, au moins un fichier ou contrat manquant).
+* **Exit Codes**: `0` (Success, 100% validated), `1` (Failure, at least one contract or file missing/over-budget).
 
 ---
 
 ### 3.2 `scripts/quality-check.sh`
-* **Rôle** : Airbag qualité de compilation et d'analyse statique Android.
-* **Actions exécutées** :
-  - Détection et initialisation automatique de `JAVA_HOME` (Android Studio JBR / JDK 21).
-  - Exécution de `./gradlew codeSanityCheck --stacktrace` :
-    1. Compilateur Kotlin (checks progressifs & annotations opt-in).
-    2. Compilateur Java (`-Xlint:all`).
-    3. Android Lint Debug & Release (Compose, sécurité, i18n, performance).
-    4. Tests unitaires et tests UI Robolectric (135+ tests).
-    5. Compatibilité Jetifier & AndroidX.
-* **Utilisation** :
+* **Role**: Primary compilation and static analysis airbag for Android.
+* **Actions executed**:
+  - Automatic detection and portable configuration of `JAVA_HOME` (Android Studio JBR / JDK 21).
+  - Execution of `./gradlew codeSanityCheck --stacktrace`:
+    1. Kotlin compiler checks (progressive mode & opt-in annotations).
+    2. Java compiler warnings (`-Xlint:all`).
+    3. Android Lint Debug & Release (Compose, security, i18n, performance).
+    4. Unit tests and Robolectric/Roborazzi UI tests.
+* **Usage**:
   ```bash
   ./scripts/quality-check.sh
   ```
-* **Rapports générés** :
+* **Generated Reports**:
   - `app/build/reports/lint-results-debug.html`
   - `app/build/reports/lint-results-release.html`
   - `app/build/reports/tests/testDebugUnitTest/index.html`
 
 ---
 
-### 3.3 `scripts/test-firestore-rules.mjs`
-* **Rôle** : Suite de tests de sécurité et de non-régression hors-ligne pour `firestore.rules`.
-* **Vérifications assurées (16 assertions)** :
-  - **Suite 1 (Structure)** : `rules_version = '2'`, helpers `isAuthenticated()`, `isCoupleMember()`, `isMemberOfCouple()`.
-  - **Suite 2 (Accès Moindre Privilège)** : Cloisonnement `/users/{userId}`, `/invites/`, `/pairings/`, `/couples/{coupleId}`, `/loads/{loadId}`, rejet par défaut `allow read, write: if false;`.
-  - **Suite 3 (Anti-Régression)** : 0 règle ouverte `if true`, 0 écriture non vérifiée `if request.auth != null`, isolation stricte des sanctuaires de test `SANCTUARY-TEST*`.
-* **Utilisation** :
+### 3.3 `scripts/test-runtime-guardrails.mjs`
+* **Role**: Offline security test suite for runtime guardrails and PoLP persona configurations.
+* **Verifications (18 assertions)**:
+  - **PoLP Tool Access**: Verifies `run_command` is denied/revoked for P1, P2, P3, and P4 personas.
+  - **Plan Guard (`plan-guard.mjs`)**: Rejection of `--no-verify`, `-c core.hooksPath` bypasses, commits on `main`, and pushes to `main`.
+  - **Branch Guard (`branch-guard.mjs`)**: Canonical path hardening preventing write operations to repository files while on `main`.
+* **Usage**:
   ```bash
-  node scripts/test-firestore-rules.mjs
+  node scripts/test-runtime-guardrails.mjs
   ```
 
 ---
 
-### 3.4 `scripts/deploy-firestore-rules.mjs`
-* **Rôle** : Déploiement programmatique sécurisé des règles Firestore sans dépendre de la CLI Firebase.
-* **Fonctionnement** :
-  1. Lit `service-account.json` et génère un JWT signé RSA-SHA256 (scope `cloud-platform datastore`).
-  2. Crée un nouveau ruleset via l'API REST `firebaserules.googleapis.com/v1/projects/{projectId}/rulesets`.
-  3. Met à jour la release `projects/{projectId}/releases/cloud.firestore`.
-* **Prérequis** : `service-account.json` valide avec rôle Firebase Rules Admin.
-* **Utilisation** :
+### 3.4 `scripts/install-hooks.sh`
+* **Role**: Binds local Git hooks to `.agent/hooks/` and guarantees executable permissions.
+* **Actions executed**:
+  - Sets executable permissions on `.agent/hooks/*.sh` and `*.mjs`.
+  - Symlinks standard Git `pre-commit` to `pre-commit-airbag.sh`.
+  - Configures Git `core.hooksPath` to `.agent/hooks`.
+* **Usage**:
   ```bash
-  node scripts/deploy-firestore-rules.mjs
+  ./scripts/install-hooks.sh
   ```
 
 ---
 
 ### 3.5 `scripts/deploy-app-distribution.sh`
-* **Rôle** : Construction et distribution directe sur Firebase App Distribution depuis le terminal local.
-* **Fonctionnement** :
-  1. Détecte `service-account.json`.
-  2. Calcule la version Git (`versionCode` = nombre total de commits, `versionName` = tag SemVer + commits ahead).
-  3. Formate les notes de version : `v<versionName> (build <versionCode>) : <message>`.
-  4. Compile (`assembleDebug` ou `assembleRelease`) et téléverse (`appDistributionUploadDebug` ou `appDistributionUploadRelease`).
-  5. Nettoie les fichiers temporaires `release-notes.txt`.
-* **Arguments & Options** :
-  - `[notes]` : Message explicatif pour les testeurs (défaut : message du dernier commit Git).
-  - `[variant]` : `release` (défaut) ou `debug`.
-  - `--groups, -g` : Groupes de testeurs Firebase ciblés (défaut : `admin, testers`).
-* **Exemples** :
+* **Role**: Direct build and distribution to Firebase App Distribution from the local developer terminal.
+* **Workflow**:
+  1. Detects `service-account.json`.
+  2. Calculates Git version metadata (`versionCode` using monotonic multiplier x100, `versionName` with SemVer tag and commits ahead).
+  3. Formats release notes: `v<versionName> (build <versionCode>) : <message>`.
+  4. Compiles (`assembleDebug` or `assembleRelease`) and uploads (`appDistributionUploadDebug` or `appDistributionUploadRelease`).
+  5. Cleans up temporary `release-notes.txt` artifacts.
+* **Arguments & Options**:
+  - `[notes]`: User-facing message for testers (default: latest Git commit message).
+  - `[variant]`: `release` (default) or `debug`.
+  - `--groups, -g`: Targeted Firebase tester groups (default: `admin, testers`).
+* **Examples**:
   ```bash
-  # 1. Distribution standard
+  # 1. Standard release distribution
   ./scripts/deploy-app-distribution.sh
 
-  # 2. Avec notes personnalisées
-  ./scripts/deploy-app-distribution.sh "Correction synchronisation duo"
+  # 2. With custom release notes
+  ./scripts/deploy-app-distribution.sh "Fix duo sync state"
 
-  # 3. Release APK pour testeurs internes
+  # 3. Release APK for internal admins
   ./scripts/deploy-app-distribution.sh "RC v0.2.0" release --groups "admin"
   ```
 
 ---
 
 ### 3.6 `scripts/upload-screenshots.py`
-* **Rôle** : Mappage et téléversement déterministe des captures Roborazzi sur les écrans Stitch.
-* **Garanties** :
-  - Mappage 1:1 strict entre 10 captures locales (`screenshots/stitch_export/*.png`) et 10 `screen_id` Google Stitch.
-  - Mise à jour strictly in-place (interdiction formelle de créer des écrans orphelins).
-  - Validation préalable de l'existence et du poids de chaque fichier PNG.
-* **Options CLI** :
-  - `--project-id` : ID du projet Stitch (défaut : `<stitch-project-id>`).
-  - `--check-only` : Vérifie la présence et le mappage des 10 PNGs sans téléversement.
-  - `--dry-run` : Simule l'exécution et affiche les payloads JSON/Base64.
-* **Exemples** :
+* **Role**: Deterministic mapping and upload of Roborazzi UI screenshots to Google Stitch screens.
+* **Guarantees**:
+  - Strict 1:1 mapping between local snapshots (`screenshots/stitch_export/*.png`) and Google Stitch `screen_id`s.
+  - In-place screen updates preventing duplicate or orphaned screens in Stitch.
+  - Pre-validation of PNG file existence and non-zero byte size.
+* **CLI Options**:
+  - `--project-id`: Google Stitch Project ID.
+  - `--check-only`: Verifies presence and mapping of PNG files without uploading.
+  - `--dry-run`: Simulates execution and outputs JSON/Base64 payloads.
+* **Examples**:
   ```bash
   python3 scripts/upload-screenshots.py --check-only
   python3 scripts/upload-screenshots.py --dry-run
@@ -183,46 +180,34 @@ graph TD
 ---
 
 ### 3.7 `scripts/generate-screenshots.sh`
-* **Rôle** : Exécute les tests d'UI Robolectric et Roborazzi pour enregistrer et générer localement les captures d'écran de l'application dans `build/outputs/roborazzi`.
-* **Fonctionnement** :
-  - Lance `./gradlew recordRoborazziDebug --stacktrace`.
-  - Produit les captures d'écran requises pour la validation et la synchronisation du Design System.
-* **Utilisation** :
+* **Role**: Executes Robolectric and Roborazzi UI tests to record and update application screenshots locally in `build/outputs/roborazzi`.
+* **Workflow**:
+  - Executes `./gradlew recordRoborazziDebug --stacktrace`.
+  - Produces verified screenshot assets required for Design System synchronization.
+* **Usage**:
   ```bash
   ./scripts/generate-screenshots.sh
   ```
 
 ---
 
-### 3.8 `scripts/cleanup-e2e-firestore.mjs`
-* **Rôle** : Nettoyage et purge des documents Firestore de sonde créés lors des tests d'authentification ou d'intégrité.
-* **Fonctionnement** :
-  - S'authentifie via `service-account.json`.
-  - Liste les documents sous `/users` créés par les sondes de test.
-  - Supprime chaque document unitairement via l'API REST Firestore.
-* **Utilisation** :
-  ```bash
-  node scripts/cleanup-e2e-firestore.mjs
-  ```
-
----
-
-### 3.9 `scripts/inspect-ide.sh`
-* **Rôle** : Inspection headless IntelliJ / Android Studio.
-* **Utilisation** :
+### 3.8 `scripts/inspect-ide.sh`
+* **Role**: Headless IntelliJ IDEA / Android Studio static inspection runner.
+* **Usage**:
   ```bash
   ./scripts/inspect-ide.sh
   ```
 
 ---
 
-## 4. Matrice de Composition (Skills & Pipelines ➔ Scripts & MCP)
+## 4. Composition Matrix (Skills & Pipelines ➔ Scripts & MCP)
 
-| Skill / Pipeline | Outils Invoqués (dans l'ordre d'exécution) |
+| Skill / Pipeline | Invoked Tools (in execution order) |
 |---|---|
-| **`quality-airbag`** (`/quality-check`) | 1. `scripts/validate-docs.sh`<br>2. `scripts/quality-check.sh`<br>3. `scripts/test-firestore-rules.mjs` |
-| **`open-pr`** (`/open-pr`) | 1. `scripts/quality-check.sh` (Airbag qualité complet) |
-| **`distribute-local`** (`/distribute-local`) | 1. `scripts/quality-check.sh` (Recommandé)<br>2. `scripts/deploy-app-distribution.sh` |
+| **`quality-airbag`** (`/quality-check`) | 1. `scripts/validate-docs.sh`<br>2. `scripts/quality-check.sh`<br>3. `scripts/test-runtime-guardrails.mjs` |
+| **`open-pr`** (`/open-pr`) | 1. `scripts/quality-check.sh` (Full quality airbag)<br>2. Walkthrough generation & PR creation |
+| **`distribute-local`** (`/distribute-local`) | 1. `scripts/quality-check.sh` (Recommended)<br>2. `scripts/deploy-app-distribution.sh` |
 | **`sync-stitch`** (`/sync-stitch`) | 1. `scripts/validate-docs.sh`<br>2. `scripts/generate-screenshots.sh`<br>3. `scripts/upload-screenshots.py` |
-| **`triage-feedback`** (`/triage-feedback`) | 100% MCP natif (`GitHubMCP` : `search_issues`, `add_issue_comment`, `create_issue`) |
-| **Delivery Pipeline & Quality Gate (`delivery-pipeline.yml`)** | 1. `scripts/validate-docs.sh`<br>2. `scripts/quality-check.sh` (`./gradlew codeSanityCheck`)<br>3. Compilation & Firebase App Distribution via Gradle |
+| **`triage-feedback`** (`/triage-feedback`) | 100% native MCP (`GitHubMCP`: `search_issues`, `add_issue_comment`, `create_issue`) |
+| **Delivery Pipeline & Quality Gate (`delivery-pipeline.yml`)** | 1. `scripts/validate-docs.sh`<br>2. `scripts/quality-check.sh` (`./gradlew codeSanityCheck`)<br>3. APK build & Firebase App Distribution deployment via Gradle |
+
