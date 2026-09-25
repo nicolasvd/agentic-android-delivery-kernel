@@ -18,21 +18,21 @@ echo "=================================================="
 # 1. Check for service-account.json
 if [ ! -f "$SERVICE_ACCOUNT_FILE" ]; then
     echo ""
-    echo "❌ Erreur : Fichier '$SERVICE_ACCOUNT_FILE' introuvable !"
+    echo "❌ Error: File '$SERVICE_ACCOUNT_FILE' not found!"
     echo ""
-    echo "ℹ️  Comment obtenir et configurer vos identifiants :"
-    echo "   1. Rendez-vous sur la console Google Cloud / Firebase :"
+    echo "ℹ️  How to obtain and configure your credentials:"
+    echo "   1. Go to the Google Cloud / Firebase Console:"
     echo "      https://console.cloud.google.com/iam-admin/serviceaccounts?project=${FIREBASE_PROJECT_ID}"
-    echo "   2. Créez ou sélectionnez un compte de service avec le rôle 'Firebase App Distribution Admin'."
-    echo "   3. Générez et téléchargez une clé privée au format JSON."
-    echo "   4. Placez le fichier à la racine du projet sous le nom :"
+    echo "   2. Create or select a service account with the 'Firebase App Distribution Admin' role."
+    echo "   3. Generate and download a private key in JSON format."
+    echo "   4. Place the file at the project root named:"
     echo "      service-account.json"
-    echo "   (Note : ce fichier est automatiquement ignoré par .gitignore pour votre sécurité)"
+    echo "   (Note: this file is automatically ignored by .gitignore for security)"
     echo ""
     exit 1
 fi
 
-echo "✅ Compte de service détecté : $SERVICE_ACCOUNT_FILE"
+echo "✅ Service account detected: $SERVICE_ACCOUNT_FILE"
 
 # 2. Extract Git version metadata
 git -C "$ROOT_DIR" fetch --tags 2>/dev/null || true
@@ -132,9 +132,9 @@ fi
 FORMATTED_RELEASE_NOTES="v${VERSION_NAME} (build ${VERSION_CODE}) : ${RAW_MESSAGE}"
 
 echo "📦 Version : v${VERSION_NAME} (build ${VERSION_CODE})"
-echo "👥 Groupes cibles : $TARGET_GROUPS"
-echo "🏗️  Variante build : $BUILD_VARIANT"
-echo "📝 Notes de version :"
+echo "👥 Target groups : $TARGET_GROUPS"
+echo "🏗️  Build variant : $BUILD_VARIANT"
+echo "📝 Release notes :"
 echo "--------------------------------------------------"
 echo "$FORMATTED_RELEASE_NOTES"
 echo "--------------------------------------------------"
@@ -161,7 +161,7 @@ if [ "$BUILD_VARIANT" = "release" ]; then
 fi
 
 echo ""
-echo "📦 Lancement de la compilation ($ASSEMBLE_TASK) et de l'upload Firebase ($GRADLE_TASK)..."
+echo "📦 Launching build ($ASSEMBLE_TASK) and Firebase upload ($GRADLE_TASK)..."
 echo ""
 
 cd "$ROOT_DIR"
@@ -174,7 +174,7 @@ rm -f "$ROOT_DIR/release-notes.txt"
 
 echo ""
 echo "=================================================="
-echo "🎉 Distribution locale terminée avec succès !"
-echo "📱 Console Firebase App Distribution :"
+echo "🎉 Local distribution completed successfully!"
+echo "📱 Firebase App Distribution Console:"
 echo "   $FIREBASE_CONSOLE_URL"
 echo "=================================================="

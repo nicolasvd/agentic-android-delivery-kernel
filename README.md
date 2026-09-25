@@ -22,24 +22,24 @@ Autonomous AI coding agents often derail when given unbounded write access to pr
 ```mermaid
 flowchart TD
     subgraph Inception["Phase 1 · Inception Consortium"]
-        P1["P1: Product Planner\nAnti-duplication & User Stories Gherkin"] --> P2["P2: Design Lead\nTokens M3, UI Matrix 4 états"]
-        P2 --> P3["P3: Privacy & Data\nZero-PII, Taxonomie analytique, RGPD"]
-        P3 --> P4["P4: System Architect\nClean MVI, Boundaries, Découpage DAG Epics"]
+        P1["P1: Product Planner\nAnti-duplication & Gherkin User Stories"] --> P2["P2: Design Lead\nM3 Tokens, 4-State UI Matrix"]
+        P2 --> P3["P3: Privacy & Data\nZero-PII, Analytics Taxonomy, GDPR"]
+        P3 --> P4["P4: System Architect\nClean MVI, Boundaries, Epic DAG Decomposition"]
         P4 --> Spec["Dual-Write Spec\nGitHub Issue Comment + implementation_plan.md"]
     end
 
-    Spec --> Gate14{"🛑 GATE 1.4 : Inception Halt\nApprobation explicite écrite\n(Branch Guard actif sur main/master)"}
+    Spec --> Gate14{"🛑 GATE 1.4 : Inception Halt\nExplicit Written Approval\n(Branch Guard active on default branch)"}
 
     subgraph Delivery["Phase 2 · Delivery"]
-        Gate14 -->|Validation explicite| Branch["Création de branche dédiée\n<type>/issue-<id>-<slug>"]
-        Branch --> P5["P5: Software Engineer\nImplémentation TDD & Compose strict\nZéro chaîne en dur (strings.xml)"]
+        Gate14 -->|Explicit approval| Branch["Dedicated Feature Branch\n<type>/issue-<id>-<slug>"]
+        Branch --> P5["P5: Software Engineer\nTDD & Strict Compose Implementation\nZero Hardcoded Strings (strings.xml)"]
         P5 --> Airbag["🛡️ Quality Airbag\n./scripts/quality-check.sh\n(codeSanityCheck + Lint + Roborazzi)"]
     end
 
     subgraph Release["Phase 3 · Release"]
-        Airbag -->|Vérifications 100% vertes| P6["P6: Release Manager\nPush git & Ouverture PR Walkthrough"]
-        P6 --> Gate35{"🔒 GATE 3.5 : Auto-Merge Lock\nAttente formelle du développeur\n('Tu peux merger')"}
-        Gate35 -->|Confirmation écrite| Merge["Squash Merge & Dual-Sync\nClôture Kanban & Pruning local"]
+        Airbag -->|100% green checks| P6["P6: Release Manager\nGit Push & Open PR Walkthrough"]
+        P6 --> Gate35{"🔒 GATE 3.5 : Auto-Merge Lock\nHuman Authorization Required\n('Tu peux merger')"}
+        Gate35 -->|Written confirmation| Merge["Squash Merge & Dual-Sync\nKanban Closure & Branch Pruning"]
     end
 
     style Gate14 fill:#ff4d4f,stroke:#333,stroke-width:2px,color:#fff
