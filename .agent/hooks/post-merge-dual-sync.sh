@@ -23,19 +23,20 @@ if [ -z "$PR_NUMBER" ]; then
     COMMIT_MSG=$(git log -1 --pretty=%B)
     echo "ℹ️  No PR number provided. Inspecting HEAD commit message:"
     echo "   $(git log -1 --oneline)"
-    ISSUE_MATCH=$(echo "$COMMIT_MSG" | grep -oE '(Closes|Fixes|Resolves) #[0-9]+' | grep -oE '[0-9]+' | head -1 || true)
+    RESOLVED_ISSUES=$(echo "$COMMIT_MSG" | grep -oE '(Closes|Fixes|Resolves) #[0-9]+' | grep -oE '[0-9]+' | sort -u || true)
 else
     echo "ℹ️  Inspecting PR #$PR_NUMBER via GitHub CLI..."
     PR_JSON=$(gh pr view "$PR_NUMBER" --json title,body,labels,mergedAt 2>/dev/null || true)
-    ISSUE_MATCH=$(echo "$PR_JSON" | grep -oE '(Closes|Fixes|Resolves) #[0-9]+' | grep -oE '[0-9]+' | head -1 || true)
+    RESOLVED_ISSUES=$(echo "$PR_JSON" | grep -oE '(Closes|Fixes|Resolves) #[0-9]+' | grep -oE '[0-9]+' | sort -u || true)
 fi
 
-if [ -z "$ISSUE_MATCH" ]; then
+if [ -z "$RESOLVED_ISSUES" ]; then
     echo "ℹ️  No tracking issue resolved by this merge. Dual-sync not required."
     exit 0
 fi
 
-echo "🔍 Tracking Issue identified: #$ISSUE_MATCH"
+ISSUE_MATCH=$(echo "$RESOLVED_ISSUES" | head -1)
+echo "🔍 Tracking Issue(s) identified: $(echo "$RESOLVED_ISSUES" | tr '\n' ' ')"
 
 # 2. Inspect issue labels to verify source:crashlytics
 ISSUE_LABELS=$(gh issue view "$ISSUE_MATCH" --json labels --jq '.labels[].name' 2>/dev/null || true)
@@ -83,7 +84,17 @@ else
     echo "ℹ️  Issue #$ISSUE_MATCH does not carry 'source:crashlytics'. Dual-sync skipped."
 fi
 
-# 4. Dynamic Base Branch Synchronization
+# 4. Automate Kanban Status Transition to "Done" in GitHub Projects v2
+SYNC_SCRIPT="$ROOT_DIR/scripts/sync-project-metadata.mjs"
+if [ -f "$SYNC_SCRIPT" ] && [ -n "$RESOLVED_ISSUES" ]; then
+    echo "📊 Synchronizing Kanban status to 'Done' on GitHub Projects v2..."
+    for TARGET_ISSUE in $RESOLVED_ISSUES; do
+        echo "   • Issue #$TARGET_ISSUE -> Status: Done"
+        node "$SYNC_SCRIPT" "$TARGET_ISSUE" --status Done 2>/dev/null || echo "     ⚠️ Warning: Failed to transition #$TARGET_ISSUE to Done on Project board."
+    done
+fi
+
+# 5. Dynamic Base Branch Synchronization
 if [ -n "$PR_NUMBER" ]; then
     TARGET_BASE=$(gh pr view "$PR_NUMBER" --json baseRefName --jq '.baseRefName' 2>/dev/null || echo "main")
     HEAD_BRANCH=$(gh pr view "$PR_NUMBER" --json headRefName --jq '.headRefName' 2>/dev/null || echo "")
