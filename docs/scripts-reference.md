@@ -67,6 +67,8 @@ graph TD
 | [`scripts/generate-screenshots.sh`](../scripts/generate-screenshots.sh) | Bash | Atomic | Executes Robolectric/Roborazzi UI tests to record and generate local screenshots in `build/outputs/roborazzi`. | `sync-stitch`, Design System capture update |
 | [`scripts/upload-screenshots.py`](../scripts/upload-screenshots.py) | Python 3 | Atomic | Validates and maps Roborazzi screenshot baselines to Google Stitch `screen_id`s for in-place synchronization. | `sync-stitch`, `upload-screenshots.py` |
 | [`scripts/inspect-ide.sh`](../scripts/inspect-ide.sh) | Bash | Atomic | Executes Android Studio / IntelliJ IDEA code inspection engine in headless mode with default project profiles. | Advanced IDE quality audit |
+| [`scripts/seal-issue.sh`](../scripts/seal-issue.sh) | Bash | Atomic | Atomically seals GitHub issues from local plans (JIT), binds milestones, links `--parent`, and triggers metadata sync. | `plan-issue`, Inception Gate 1.4 |
+| [`scripts/sync-project-metadata.mjs`](../scripts/sync-project-metadata.mjs) | Node.js (ESM) | Atomic | Synchronizes native GitHub Projects v2 fields (`Priority`, `Size`, `Estimate`, `Status`) via GraphQL. | `seal-issue.sh`, post-checkout |
 
 ---
 
@@ -200,14 +202,42 @@ graph TD
 
 ---
 
+### 3.9 `scripts/seal-issue.sh`
+* **Role**: Deterministic Just-In-Time (JIT) issue sealer and Epic branch initializer.
+* **Workflow**:
+  - Parses frontmatter and body from `implementation_plan.md`.
+  - Creates the GitHub issue via `gh issue create` with native `--milestone` and `--parent`.
+  - Synchronizes project fields (`Priority`, `Size`, `Estimate`, `Status`) via `scripts/sync-project-metadata.mjs`.
+  - Initializes isolated Epic branches (`epic/**`) when `type: epic` or `Size: L/XL`.
+  - Updates local implementation plan with issue ID and approved status.
+* **Usage**:
+  ```bash
+  ./scripts/seal-issue.sh --from-plan [plan.md] [--dry-run]
+  ./scripts/seal-issue.sh --sync <issue_id> [options]
+  ```
+
+---
+
+### 3.10 `scripts/sync-project-metadata.mjs`
+* **Role**: Direct GraphQL synchronizer for GitHub Projects v2 custom fields.
+* **Fields managed**: `Priority` (P0-P2), `Size` (XS-XL), `Estimate` (number), `Status` (Backlog to Done).
+* **Usage**:
+  ```bash
+  node scripts/sync-project-metadata.mjs <issue_id> --priority P1 --size S --estimate 1.0 --status Ready
+  ```
+
+---
+
 ## 4. Composition Matrix (Skills & Pipelines ➔ Scripts & MCP)
 
 | Skill / Pipeline | Invoked Tools (in execution order) |
 |---|---|
+| **`plan-issue`** (`/plan-issue`) | 1. `scripts/seal-issue.sh` (JIT Sealing at Gate 1.4)<br>2. `scripts/sync-project-metadata.mjs` |
 | **`quality-airbag`** (`/quality-check`) | 1. `scripts/validate-docs.sh`<br>2. `scripts/quality-check.sh`<br>3. `scripts/test-runtime-guardrails.mjs` |
 | **`open-pr`** (`/open-pr`) | 1. `scripts/quality-check.sh` (Full quality airbag)<br>2. Walkthrough generation & PR creation |
 | **`distribute-local`** (`/distribute-local`) | 1. `scripts/quality-check.sh` (Recommended)<br>2. `scripts/deploy-app-distribution.sh` |
 | **`sync-stitch`** (`/sync-stitch`) | 1. `scripts/validate-docs.sh`<br>2. `scripts/generate-screenshots.sh`<br>3. `scripts/upload-screenshots.py` |
 | **`triage-feedback`** (`/triage-feedback`) | 100% native MCP (`GitHubMCP`: `search_issues`, `add_issue_comment`, `create_issue`) |
 | **Delivery Pipeline & Quality Gate (`delivery-pipeline.yml`)** | 1. `scripts/validate-docs.sh`<br>2. `scripts/quality-check.sh` (`./gradlew codeSanityCheck`)<br>3. APK build & Firebase App Distribution deployment via Gradle |
+
 
