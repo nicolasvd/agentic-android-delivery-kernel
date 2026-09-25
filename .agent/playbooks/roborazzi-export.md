@@ -41,7 +41,7 @@ class YourScreenSnapshotTest {
     @Test
     fun snapshot_YourScreen_Default_Light() {
         composeTestRule.setContent {
-            SecondBrainTheme(darkTheme = false) {
+            AgenticAndroidStarterTheme(darkTheme = false) {
                 YourScreen(uiState = YourUiState.Content(items = fakeItems))
             }
         }
@@ -54,7 +54,7 @@ class YourScreenSnapshotTest {
     @Test
     fun snapshot_YourScreen_Loading_Dark() {
         composeTestRule.setContent {
-            SecondBrainTheme(darkTheme = true) {
+            AgenticAndroidStarterTheme(darkTheme = true) {
                 YourScreen(uiState = YourUiState.Loading)
             }
         }

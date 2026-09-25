@@ -129,7 +129,7 @@ def main():
 
     if not screenshots_path.exists():
         print(f"❌ Error: Directory '{screenshots_path}' does not exist.")
-        print("💡 Run './gradlew testDebugUnitTest --tests com.secondbrain.app.screenshots.StitchScreenshotCaptureTest -Proborazzi.record=true' first.")
+        print("💡 Run './gradlew testDebugUnitTest --tests com.example.kernel.starter.GreetingPreviewScreenshotTest -Proborazzi.record=true' first.")
         sys.exit(1)
 
     # 1. Directory Hygiene & Regex Check
