@@ -50,7 +50,7 @@ stateDiagram-v2
     }
 
     state Gate_3_5 <<choice>>
-    note right of Gate_3_5 : ZERO AUTO-MERGE — Explicit author confirmation\n('Tu peux merger')
+    note right of Gate_3_5 : ZERO AUTO-MERGE — Explicit author confirmation\n('Tu peux merger' / 'Approve merge')
 
     Gate_3_5 --> SquashMerge : Confirmed
     SquashMerge --> PostMergeSync : post-merge-dual-sync.sh

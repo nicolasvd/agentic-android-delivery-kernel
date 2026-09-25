@@ -72,7 +72,7 @@ gh pr create --base main --head <type>/issue-<id>-<slug> \
 ### 3. Zero Auto-Merge Rule
 
 > [!CAUTION]
-> **P6 NEVER merges a PR without explicit human confirmation.** Present the PR link and stop. Merge only after explicit confirmation (e.g. *"Tu peux merger"*).
+> **P6 NEVER merges a PR without explicit human confirmation.** Present the PR link and stop. Merge only after explicit confirmation (e.g. *"Tu peux merger"* / *"Approve merge"*).
 
 ### 4. Post-Merge Cleanup & Dual-Sync
 ```bash

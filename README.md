@@ -63,7 +63,7 @@ flowchart TD
 
     subgraph Release["Phase 3 · Release & Observability"]
         Airbag -->|100% green checks| P6["P6: Release Manager\nGit Push & Open PR Walkthrough"]
-        P6 --> Gate35{"🔒 GATE 3.5 : Auto-Merge Lock\nHuman Authorization Required\n('Tu peux merger')"}
+        P6 --> Gate35{"🔒 GATE 3.5 : Auto-Merge Lock\nHuman Authorization Required\n('Tu peux merger' / 'Approve merge')"}
         Gate35 -->|Written confirmation| Merge["Squash Merge & Dual-Sync\nKanban Closure & Branch Pruning"]
     end
 
@@ -92,7 +92,7 @@ flowchart TD
    - Activated after all Quality Airbag assertions pass 100% green.
    - Persona 6 pushes the branch and opens a Pull Request with a structured Walkthrough via `GitHubMCP:create_pull_request`.
    - PR targets `epic/**` with `skip-release` for intermediate child tasks; targets `main` for standalone or consolidated Epic releases.
-   - **Gate 3.5 — Zero Auto-Merge Lock**: Strict halt with PR link. Merges exclusively after explicit user confirmation (*"Tu peux merger"*).
+   - **Gate 3.5 — Zero Auto-Merge Lock**: Strict halt with PR link. Merges exclusively after explicit user confirmation (*"Tu peux merger"* / *"Approve merge"*).
    - Executes squash merge, runs `.agent/hooks/post-merge-dual-sync.sh` (dynamically synchronizing base branch), and prunes branches.
 
 ### Conditional Persona 2 Design Gate
@@ -100,7 +100,7 @@ flowchart TD
 Pillar 1 (Design Spec) enforcement is contextual and adaptive:
 * **UI & Composable Changes**: **Persona 2 (Design Lead)** must define Material 3 tokens (from [`DESIGN.md`](DESIGN.md)), 4-state UI matrix (`Loading`, `Empty`, `Error`, `Content`), and Roborazzi expectations.
 * **Non-UI Changes**: For backend, Room, CI/CD, scripts, or doc chores, Pillar 1 is explicitly marked: `N/A — No visual/UI changes`.
-* **Explicit User Override**: If prompt requests to skip design (*"skip design"*, *"sans design"*), P2 is immediately bypassed.
+* **Explicit User Override**: If prompt requests to skip design (*"skip design"* / *"sans design"*), P2 is immediately bypassed.
 
 ---
 
@@ -126,7 +126,7 @@ The kernel divides operational responsibilities into 6 distinct personas. To gua
 3. **Rule A (Append-Only Immutability)**: Issue title and body are permanently read-only once created. Revisions are appended exclusively via comments.
 4. **WIP = 1 (Single Active Pair)**: Exactly 1 issue `In Progress` and at most 1 PR `In Review` at any time (Macro Epic in progress, Micro child WIP = 1).
 5. **Dual-Write Pattern**: Canonical remote GitHub issue synchronized with local `implementation_plan.md` mirror for IDE harmony.
-6. **Zero Auto-Merge Lock (Gate 3.5)**: The agent never merges autonomously without human confirmation (*"Tu peux merger"*).
+6. **Zero Auto-Merge Lock (Gate 3.5)**: The agent never merges autonomously without human confirmation (*"Tu peux merger"* / *"Approve merge"*).
 7. **Runtime Bypass Guardrails**:
    * **`branch-guard.mjs`**: PreToolUse hook intercepting file write tools (`write_to_file`, `replace_file_content`), blocking edits on protected branches (`main`, `epic/**`).
    * **`plan-guard.mjs`**: PreToolUse hook intercepting shell executions, blocking `--no-verify`, inline hooks overrides (`-c core.hooksPath`), and direct git pushes to protected branches.
@@ -239,7 +239,7 @@ All repository-specific parameters are centralized in `kernel.config.json`, form
 ### 1. Configure the Kernel
 Clone the repository and adapt `kernel.config.json` with your project coordinates:
 ```bash
-git clone https://github.com/<owner>/agentic-android-delivery-kernel.git my-app
+git clone https://github.com/nicolasvd/agentic-android-delivery-kernel.git my-app
 cd my-app
 # Customize kernel.config.json
 ```
@@ -269,7 +269,7 @@ When initiating a feature or bug fix:
 2. **Gate 1.4 Halt**: The agent halts and awaits your explicit approval.
 3. **JIT Sealing**: Once approved, the issue is sealed automatically on GitHub with Projects v2 fields.
 4. **Delivery & Testing**: Persona 5 implements code on `<type>/issue-<id>-<slug>` and verifies tests green.
-5. **Gate 3.5 Release**: Persona 6 opens the PR and awaits your explicit command (*"Tu peux merger"*).
+5. **Gate 3.5 Release**: Persona 6 opens the PR and awaits your explicit command (*"Tu peux merger"* / *"Approve merge"*).
 
 ### 📋 Live Kanban Delivery Board (GitHub Projects v2)
 

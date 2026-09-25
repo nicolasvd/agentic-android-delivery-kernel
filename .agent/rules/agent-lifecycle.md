@@ -132,7 +132,7 @@ gh pr create --base <base_branch> --head <type>/issue-<id>-<slug> \
 ### Step 3.3 · Zero Auto-Merge Rule
 
 > [!CAUTION]
-> The agent NEVER merges a PR autonomously. Present the PR link and stop. Merge only after the user says *"Tu peux merger"* or equivalent.
+> The agent NEVER merges a PR autonomously. Present the PR link and stop. Merge only after the user says *"Tu peux merger"* / *"Approve merge"* or equivalent.
 
 ### Step 3.4 · Post-Merge Branch Cleanup & Dynamic Sync
 

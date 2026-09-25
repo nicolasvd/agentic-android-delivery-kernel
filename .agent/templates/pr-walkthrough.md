@@ -87,5 +87,5 @@ Zero "N/A" lines or empty placeholders are permitted.
 
 > [!CAUTION]
 > **Zero Auto-Merge — Explicit approval required.**
-> This PR will NOT be merged until the author explicitly confirms: *"Tu peux merger"* or equivalent.
+> This PR will NOT be merged until the author explicitly confirms: *"Tu peux merger"* / *"Approve merge"* or equivalent.
 > P6 presents this PR link and stops. Merge is a deliberate human action.

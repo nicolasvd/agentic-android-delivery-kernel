@@ -89,7 +89,7 @@ GitHubMCP:create_pull_request {
 ### Step 6: Zero Auto-Merge Guardrail (STOP & WAIT)
 
 > [!CAUTION]
-> **Zero Auto-Merge Rule**: Persona 6 MUST NEVER merge the PR automatically. Present the PR link in chat and stop. Wait for explicit user approval (e.g. *"Tu peux merger"*).
+> **Zero Auto-Merge Rule**: Persona 6 MUST NEVER merge the PR automatically. Present the PR link in chat and stop. Wait for explicit user approval (e.g. *"Tu peux merger"* / *"Approve merge"*).
 
 ### Step 7: Post-Merge Cleanup & Dual-Sync
 Once user confirms merge:
