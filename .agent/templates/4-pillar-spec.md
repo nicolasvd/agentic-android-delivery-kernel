@@ -1,7 +1,7 @@
 ---
 template: 4-pillar-spec
-version: 2.0.0
-usage: Post as GitHubMCP:add_issue_comment on the tracking issue after P1 creates the sealed issue.
+version: 2.1.0
+usage: Authoritative sealed body for GitHub Issues created at Gate 1.4 via scripts/seal-issue.sh.
 ---
 
 # 4-Pillar Inception Spec — Issue #{{ISSUE_ID}}: {{ISSUE_TITLE}}
@@ -36,8 +36,6 @@ Feature: {{FEATURE_NAME}}
 - [ ] All 3-State behaviors validated (Guest · Solo · Duo).
 - [ ] Zero regressions on existing Roborazzi snapshots.
 - [ ] `./scripts/quality-check.sh` exits 0.
-
-**Metadata**: **Milestone**: `{{MILESTONE_NAME}}` · **Priority**: `{{PRIORITY_P0_P1_P2}}` · **Size**: `{{SIZE_XS_TO_XL}}` · **Estimate**: `{{ESTIMATE}}`
 
 ---
 

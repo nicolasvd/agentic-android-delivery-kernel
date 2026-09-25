@@ -1,7 +1,7 @@
 name: 🐛 Bug Report
 description: Report a malfunction, regression, or synchronization issue
 title: "fix(<scope>): <short descriptive bug title>"
-labels: ["type:bug"]
+labels: ["bug"]
 body:
   - type: markdown
     attributes:
@@ -14,14 +14,13 @@ body:
       label: Scope / Affected Domain
       description: Choose the primary domain where the bug occurs.
       options:
-        - tasks (Creation, editing, deletion, mental load completion)
-        - matrix (Eisenhower matrix display or interaction)
-        - duo (Real-time synchronization, duo pairing)
-        - analytics (Gauge calculation, trends, charts)
-        - auth (Google Sign-In, sessions)
-        - sync (Firestore, Room, offline)
-        - ui (Display, visual glitch, animation)
-        - ai (Gemini classification, API timeout)
+        - core (Local Room database, data repositories, clean architecture)
+        - ui (Jetpack Compose components, themes, animations, Roborazzi)
+        - ai (Gemini multimodal logic, smart agents, function calling)
+        - sync (Firestore synchronization, offline-first reconciliation)
+        - analytics (Zero-PII telemetry, adoption metrics, audit trails)
+        - tooling (Operational scripts, CI/CD automation, hooks)
+        - governance (Rules, personas, multi-agent protocol, templates)
     validations:
       required: true
   - type: textarea
@@ -29,7 +28,7 @@ body:
     attributes:
       label: Bug Description
       description: Clear and concise description of the issue encountered.
-      placeholder: "Example: When switching to the Duo tab, the loading state remains stuck..."
+      placeholder: "Example: When navigating back from the details screen, the state resets unexpectedly..."
     validations:
       required: true
   - type: textarea
@@ -39,8 +38,8 @@ body:
       description: What are the exact steps leading to the problem?
       placeholder: |
         1. Open the application
-        2. Go to the 'Matrix' tab
-        3. Drag a task to the 'Delegate' quadrant
+        2. Navigate to the target screen
+        3. Trigger the action
         4. Observe the error...
     validations:
       required: true
@@ -49,7 +48,7 @@ body:
     attributes:
       label: Expected vs. Actual Behavior
       description: What should have happened, and what actually occurred?
-      placeholder: "Expected: Task moves to target quadrant with smooth animation.\nActual: Crash or task remains unchanged."
+      placeholder: "Expected: State is preserved smoothly with no animation glitch.\nActual: State resets or crash occurs."
     validations:
       required: true
   - type: input
@@ -57,7 +56,7 @@ body:
     attributes:
       label: Test Environment
       description: Device model, Android OS version, application version.
-      placeholder: "Pixel 8 Pro - Android 14 / Emulator API 34 - v0.1.0"
+      placeholder: "Pixel 8 Pro - Android 14 / Emulator API 34 - v1.0.0"
     validations:
       required: false
   - type: textarea
