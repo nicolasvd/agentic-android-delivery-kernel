@@ -4,6 +4,7 @@ on:
   pull_request:
     branches:
       - main
+      - 'epic/**'
   push:
     branches:
       - main
@@ -108,9 +109,10 @@ jobs:
         id: check_code
         run: |
           if [ "${{ github.event_name }}" = "pull_request" ]; then
-            # Compare les fichiers modifiés par rapport à la branche main
-            CHANGED_FILES=$(git diff --name-only origin/main...HEAD)
-            echo "Fichiers modifiés :"
+            BASE_REF="${{ github.base_ref || 'main' }}"
+            # Compare les fichiers modifiés par rapport à la branche cible du PR
+            CHANGED_FILES=$(git diff --name-only "origin/${BASE_REF}...HEAD")
+            echo "Fichiers modifiés (vs origin/${BASE_REF}) :"
             echo "$CHANGED_FILES"
           
             if echo "$CHANGED_FILES" | grep -qE '^(app/|gradle/|build\.gradle\.kts|settings\.gradle\.kts|kernel\.config\.json)'; then

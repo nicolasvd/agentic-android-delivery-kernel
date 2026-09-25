@@ -38,45 +38,30 @@ GitHubMCP:search_issues { "q": "repo:<owner>/<repo> is:issue <keywords>" }
 ```
 If an open issue already covers the scope, switch to that issue or add context via comment.
 
-### Step 3: Sealed Issue Creation & Native Project Metadata (Persona 1)
-If new, P1 creates the issue assigned strictly to `@me` (`@me`):
-```json
-GitHubMCP:create_issue {
-  "owner": "@me",
-  "repo": "<repo>",
-  "title": "<type>(<scope>): <explicit title>",
-  "body": "## Context & User Story\n...",
-  "labels": ["<type>", "source:internal"],
-  "assignees": ["@me"]
-}
-```
-P1 assigns the native **GitHub Projects v2 Metadata**:
-- `Priority`: `P0` / `P1` / `P2`
-- `Size`: `XS` / `S` / `M` / `L` / `XL` (determined with P4)
-- `Estimate`: Numeric estimate in points or days (co-owned with P4)
-- `Status`: `Backlog`
-
-### Step 4: 4-Pillar Spec Orchestration & Conditional P2 Design Gate
-Consortium members populate [`.agent/templates/4-pillar-spec.md`](../../templates/4-pillar-spec.md) through contextual triage:
+### Step 3: Local 4-Pillar Spec Orchestration & Sizing Consolidation
+Consortium members populate [`.agent/templates/4-pillar-spec.md`](../../templates/4-pillar-spec.md) locally in `implementation_plan.md` (`issue: null`):
 1. **P1 (Product Planner)**: User Story (Gherkin) & 3-State Access Matrix (Guest/Solo/Duo).
-2. **P2 (Design Lead — Conditional Gate)**:
-   - **UI Changes**: If changes touch `@Composable`, screens, or theme tokens, P2 defines Material 3 tokens, component states, and Roborazzi snapshot expectations.
-   - **Non-UI Changes**: For pure backend, Room, Firestore rules, CI/CD, scripts, or chores, mark: `N/A — No visual/UI changes`.
-   - **Explicit User Override**: If prompt explicitly requests to skip design (e.g. *"skip design"*), bypass P2 immediately.
-3. **P3 (Privacy & Data Lead)**: Pillar 2 Data Spec (Zero-PII telemetry, event taxonomy, GDPR).
-4. **P4 (System Architect)**: Pillar 3 Technical Blueprint (Room, Firestore, architecture boundaries, `Size` and `Estimate`).
+2. **P2 (Design Lead — Conditional Gate)**: Material 3 tokens, component states, Roborazzi expectations (or `N/A — No visual/UI changes`). Bypass immediately if requested (*"skip design"*).
+3. **P3 (Privacy & Data Lead)**: Zero-PII telemetry, event taxonomy, GDPR/AI Act compliance.
+4. **P4 (System Architect)**: Room, Firestore, Clean MVI, and consolidated `Size` (XS–XL) and `Estimate`.
 
-### Step 4.1: Complexity L/XL Route — Epic Decomposition (Rule 0.1)
+### Step 3.1: Complexity L/XL Route — Epic Decomposition (Rule 0.1)
 If `Size` is `L` or `XL` (or `Estimate >= 3d`):
-- **Classify as Epic**: Zero Branch Guardrail — strictly forbidden to branch or commit on this issue.
-- **Decompose**: P1 & P4 produce [`.agent/templates/epic-spec.md`](../../templates/epic-spec.md) detailing the child-issue DAG (< 300 diff lines each).
-- Intermediate child PRs carry the `skip-release` label.
+- P1 & P4 produce [`.agent/templates/epic-spec.md`](../../templates/epic-spec.md) detailing sequential child tasks (< 300 diff lines each).
+- Epic integration branch `epic/issue-<id>-<slug>` will be created upon sealing.
+- Intermediate child PRs carry `skip-release`.
 
-### Step 5: Publish Spec & Dual-Write Pattern (Rule A)
-- **Canonical Remote Source**: Post compiled spec via `GitHubMCP:add_issue_comment`. Never edit original issue body.
-- **Local IDE Mirror**: Mirror 4-Pillar spec into `implementation_plan.md` artifact (`RequestFeedback: true`, `UserFacing: true`) prepending the YAML state header.
-
-### Step 6: Step 1.4 Gating Check (STOP & WAIT)
+### Step 4: Step 1.4 Gating Check (STOP & WAIT)
 
 > [!CAUTION]
-> **Step 1.4 Gate**: Do NOT create branches or write code until the user gives explicit written approval on the plan (Rule 1.5 of `agent-lifecycle.md`).
+> **Step 1.4 Gate**: Do NOT create branches, code edits, or remote GitHub issues until the user provides explicit written approval on `implementation_plan.md` (Rule 1.5).
+
+### Step 5: Just-In-Time (JIT) Sealing via CLI
+Upon explicit human approval:
+```bash
+./scripts/seal-issue.sh --from-plan [path_to_plan]
+```
+- Creates the GitHub issue assigned to `@me` with native flags (`--milestone`, `--parent`).
+- Synchronizes Project v2 metadata atomically (`Priority`, `Size`, `Estimate`, `Status: Ready`).
+- Automatically cuts and pushes `epic/issue-<id>-<slug>` from `origin/main` if Epic.
+- Updates local `implementation_plan.md` header with sealed `issue: <id>`, `branch: ...`, and `status: approved`.

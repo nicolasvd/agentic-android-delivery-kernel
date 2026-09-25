@@ -52,6 +52,7 @@
 ## 3. Branch Naming Convention
 
 ```
+Epic Branch   : epic/issue-<id>-<short-kebab-description>
 Issue-tracked : <type>/issue-<id>-<short-kebab-description>
 Standalone    : <type>/<short-kebab-description>
 ```
@@ -106,13 +107,14 @@ Format: `<type>(<scope>): <present-tense description>`
 
 ### Phase A — Implementation (Persona 5)
 1. **Branch creation & In-Progress Sync**:
+   - Standalone / Epic: branched from `main`.
+   - Epic child task: branched from active parent branch (`epic/issue-<epic_id>-<slug>`).
    ```bash
-   git checkout main && git pull
+   git checkout <base_branch> && git pull
    git checkout -b <type>/issue-<id>-<slug>
-   # Automatically triggered in background via .agent/hooks/post-checkout (or run manually):
    node .agent/sidecars/sync-issue-progress.mjs <id>
    ```
-   > **Automated Sidecar Binding**: The Git hook `.agent/hooks/post-checkout` triggers `.agent/sidecars/sync-issue-progress.mjs <id>` in the background upon checkout, binding the open milestone, active cycle, and moving the issue to **"In Progress"** on GitHub Project #1.
+   > **Automated Sidecar Binding**: `.agent/hooks/post-checkout` triggers `.agent/sidecars/sync-issue-progress.mjs <id>` in the background upon checkout, binding the open milestone, active cycle, and moving the issue to **"In Progress"** on GitHub Project #2.
 2. **Implementation**: Clean MVI (`data/model → data/repository → ui/viewmodel → ui/components`). Zero hardcoded strings. 3-State Access parity.
 3. **Atomic commits** exclusively on `<type>/issue-<id>-<slug>`.
 
@@ -131,17 +133,15 @@ Format: `<type>(<scope>): <present-tense description>`
 
 6. **PR with Walkthrough** (using [`.agent/templates/pr-walkthrough.md`](../templates/pr-walkthrough.md) via `--body-file`):
    ```bash
-   gh pr create --base main --head <type>/issue-<id>-<slug> \
+   gh pr create --base <base_branch> --head <type>/issue-<id>-<slug> \
      --title "<type>(<scope>): <title>" --body-file ./walkthrough.md
    ```
-   Assign to `@me`. Attach to "Project Kanban". **STOP & WAIT FOR USER APPROVAL**.
+   - Target base: `epic/**` with `skip-release` for intermediate child tasks; `main` for standalone or consolidated Epic release PRs.
+   - Assign to `@me`. Never add PRs directly to Project board (board hygiene). **STOP & WAIT FOR USER APPROVAL (Gate 3.5)**.
 
 7. **Post-merge cleanup** (after explicit user approval):
    ```bash
-   git checkout main && git pull origin main
-   git branch -d <type>/issue-<id>-<slug>
-   git push origin --delete <type>/issue-<id>-<slug>
-   git fetch --prune
+   ./.agent/hooks/post-merge-dual-sync.sh <pr_number>
    ```
 
 8. **Crashlytics Dual-Sync Closure** (mandatory if `source:crashlytics`):
@@ -169,17 +169,13 @@ Allowed release attachments:
 - ✅ Auto-generated release notes (GitHub `generate_release_notes: true`)
 
 Strictly forbidden from GitHub Release attachments:
-- ⛔ `agent.md`
-- ⛔ `DESIGN.md`
-- ⛔ `design-system.md`
+- ⛔ `agent.md`, `DESIGN.md`, `design-system.md`
 - ⛔ Any `.agent/rules/*.md`, `.agent/playbooks/*.md`, or `.agent/skills/*.md` file
 - ⛔ Any internal markdown or governance document
 
-Checksum generation (before GitHub Release attachment):
+Checksum generation:
 ```bash
-sha256sum app/build/outputs/apk/release/app-release.apk \
-          app/build/outputs/apk/debug/app-debug.apk \
-  > checksums.sha256
+sha256sum app/build/outputs/apk/release/app-release.apk > checksums.sha256
 ```
 
 ---
@@ -187,25 +183,18 @@ sha256sum app/build/outputs/apk/release/app-release.apk \
 ## 8. Automated CI/CD Architecture
 
 ### A. Delivery Pipeline & Quality Gate (`.github/workflows/delivery-pipeline.yml`)
-Unified workflow for PR checks, `main` push quality gate, dev distribution, and milestone releases:
+Unified workflow for PR checks (`main`, `epic/**`), `main` push quality gate, dev distribution, and milestone releases:
 - **PR & Push `main`**: JDK 21 (Temurin) · `./scripts/validate-docs.sh` · `./gradlew codeSanityCheck`.
 - Cache: `gradle/actions/setup-gradle@v4` with `cache-read-only: true`.
 
 ```
-PR targeting main
-    ──► Job 1: Quality Gate (codeSanityCheck + validate-docs.sh)
-
-Push/Merge main (Tier 1)
-    ──► Job 1: Quality Gate (codeSanityCheck + validate-docs.sh)
-    ──► Job 2: Build + Firebase App Distribution (admin, testers) — NO tag, NO GitHub Release
-
-Milestone 100% complete → manual trigger (Tier 2)
-    ──► Job 3: SemVer tag (vX.Y.Z) + GitHub Release (APK + checksums only, zero internal docs)
+PR (main / epic/**)  ──► Job 1: Quality Gate (codeSanityCheck + validate-docs.sh)
+Push main (Tier 1)   ──► Job 1: Quality Gate + Job 2: Firebase App Distribution
+Milestone (Tier 2)   ──► Job 3: SemVer tag + GitHub Release (APK + checksums only)
 ```
 
 ### C. Local Distribution (Manual / Ad-hoc)
 ```bash
-./scripts/deploy-app-distribution.sh                          # latest commit message
-./scripts/deploy-app-distribution.sh "Fix Duo Mode sync"     # custom release notes
-./scripts/deploy-app-distribution.sh "Release Notes" release # signed Release APK
+./scripts/deploy-app-distribution.sh "Release Notes" [release]
+```
 ```

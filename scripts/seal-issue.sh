@@ -153,13 +153,20 @@ if [ "$DRY_RUN" = true ]; then
     exit 0
 fi
 
+LABEL_TYPE="$TYPE"
+case "$TYPE" in
+    feat) LABEL_TYPE="feature" ;;
+    fix) LABEL_TYPE="bug" ;;
+    docs) LABEL_TYPE="documentation" ;;
+esac
+
 echo "🚀 Sealing Issue on GitHub via CLI..."
 GH_ARGS=(
     issue create
     --title "$FORMATTED_TITLE"
     --body-file "$TEMP_BODY"
     --assignee "@me"
-    --label "${TYPE},source:internal"
+    --label "${LABEL_TYPE},source:internal"
 )
 if [ -n "$MILESTONE" ]; then GH_ARGS+=(--milestone "$MILESTONE"); fi
 if [ -n "$PARENT" ]; then GH_ARGS+=(--parent "$PARENT"); fi

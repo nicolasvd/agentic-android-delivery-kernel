@@ -38,11 +38,11 @@ function isArtifactPath(targetFile, repoRoot) {
 function inspectFileWrite(targetFile, currentBranch, blockedBranches, repoRoot) {
   if (isArtifactPath(targetFile, repoRoot)) return { allow: true };
 
-  if (blockedBranches.includes(currentBranch)) {
-    return {
-      allow: false,
-      reason: `[Rule 0 Violation S-04] Direct modification to '${targetFile}' on '${currentBranch}' is blocked. Cut a dedicated feature branch first.`
-    };
+  const isEpic = currentBranch.startsWith('epic/');
+  if (blockedBranches.includes(currentBranch) || isEpic) {
+    const code = isEpic ? 'Rule 0.1 Violation E-04' : 'Rule 0 Violation S-04';
+    const msg = isEpic ? 'Direct write on epic branch blocked. Cut a child branch first.' : 'Direct write on protected branch blocked. Cut a feature branch first.';
+    return { allow: false, reason: `[${code}] ${msg}` };
   }
   return { allow: true };
 }

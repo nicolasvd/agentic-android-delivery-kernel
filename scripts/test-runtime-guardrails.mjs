@@ -146,6 +146,20 @@ const testCasesPlanGuard = [
     expectAllow: false,
     expectedErrorSubstring: 'Direct \'git push\' targeting protected branch'
   },
+  {
+    name: 'Reject git commit on epic integration branch',
+    cmd: 'git commit -m "feat: illegal direct commit"',
+    branch: 'epic/issue-12-test-epic',
+    expectAllow: false,
+    expectedErrorSubstring: 'Direct \'git commit\' on protected branch'
+  },
+  {
+    name: 'Reject git merge on epic integration branch',
+    cmd: 'git merge feature-branch',
+    branch: 'epic/issue-12-test-epic',
+    expectAllow: false,
+    expectedErrorSubstring: 'Direct \'git merge\' on protected branch'
+  },
 
   // Permitted Commands
   {
@@ -231,6 +245,12 @@ const testCasesBranchGuard = [
     name: 'Deny write to source file app/src/main/java/MainActivity.kt on main',
     file: 'app/src/main/java/MainActivity.kt',
     branch: 'main',
+    expectAllow: false
+  },
+  {
+    name: 'Deny direct write to source file on epic integration branch',
+    file: 'app/src/main/java/MainActivity.kt',
+    branch: 'epic/issue-12-test-epic',
     expectAllow: false
   },
 

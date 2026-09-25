@@ -79,10 +79,11 @@ function inspectCommand(commandLine, currentBranch, blockedBranches) {
         };
       }
 
-      if (blockedBranches.includes(currentBranch)) {
+      if (blockedBranches.includes(currentBranch) || currentBranch.startsWith('epic/')) {
+        const code = currentBranch.startsWith('epic/') ? 'Rule 0.1 Violation E-01' : 'Rule 0 Violation S-01';
         return {
           allow: false,
-          reason: `[Rule 0 Violation S-01] Direct 'git commit' on protected branch '${currentBranch}' is blocked. Cut a dedicated feature branch first.`
+          reason: `[${code}] Direct 'git commit' on protected branch '${currentBranch}' is blocked. Cut a dedicated child feature branch first.`
         };
       }
     }
@@ -106,7 +107,7 @@ function inspectCommand(commandLine, currentBranch, blockedBranches) {
       }
     }
 
-    if (subcommand === 'merge' && blockedBranches.includes(currentBranch)) {
+    if (subcommand === 'merge' && (blockedBranches.includes(currentBranch) || currentBranch.startsWith('epic/'))) {
       return { allow: false, reason: `[Rule 0 Violation S-01] Direct 'git merge' on protected branch '${currentBranch}' is blocked. Merge via PR at Gate 3.5.` };
     }
   }

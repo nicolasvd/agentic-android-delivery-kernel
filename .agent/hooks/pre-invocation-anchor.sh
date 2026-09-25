@@ -9,9 +9,15 @@ if [ -f "kernel.config.json" ]; then
 fi
 
 if [ -n "$BRANCH" ] && [ "$BRANCH" != "$DEF" ] && [ "$BRANCH" != "main" ] && [ "$BRANCH" != "master" ]; then
-    cat <<EOF
+    if [[ "$BRANCH" =~ ^epic/ ]]; then
+        cat <<EOF
+{"injectSteps":[{"ephemeralMessage":"[SYSTEM CONTEXT: Active branch: '$BRANCH' (Epic Integration Branch). Direct commits forbidden. Child tasks branch from and merge into this epic branch.]"}]}
+EOF
+    else
+        cat <<EOF
 {"injectSteps":[{"ephemeralMessage":"[SYSTEM CONTEXT: Active branch: '$BRANCH' | State: Code / PR Review Loop. Apply all fixes or test feedback directly on this branch. Do NOT create a new issue or branch.]"}]}
 EOF
+    fi
 else
     echo '{"injectSteps":[]}'
 fi
