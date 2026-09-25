@@ -6,6 +6,7 @@
   <a href="https://github.com/nicolasvd/agentic-android-delivery-kernel/actions/workflows/delivery-pipeline.yml"><img src="https://img.shields.io/badge/Quality_Airbag-100%25_Passing-success?style=for-the-badge&logo=githubactions&logoColor=white" alt="Quality Airbag Status"></a>
   <a href="https://developer.android.com/jetpack/compose"><img src="https://img.shields.io/badge/Jetpack_Compose-Material_3-4285F4?style=for-the-badge&logo=jetpackcompose&logoColor=white" alt="Jetpack Compose"></a>
   <a href="https://github.com/takahirom/roborazzi"><img src="https://img.shields.io/badge/Visual_Regression-Roborazzi-purple?style=for-the-badge" alt="Roborazzi Visual Regression"></a>
+  <a href="https://github.com/users/nicolasvd/projects/2"><img src="https://img.shields.io/badge/Live_Board-Projects_v2-7C3AED?style=for-the-badge&logo=github&logoColor=white" alt="Live Kanban Board"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-Apache_2.0-blue?style=for-the-badge" alt="License"></a>
   <a href="kernel.config.json"><img src="https://img.shields.io/badge/Architecture-Micro--Kernel_(%3C10KB)-emerald?style=for-the-badge" alt="Micro-Kernel Architecture"></a>
 </p>
@@ -269,6 +270,17 @@ When initiating a feature or bug fix:
 3. **JIT Sealing**: Once approved, the issue is sealed automatically on GitHub with Projects v2 fields.
 4. **Delivery & Testing**: Persona 5 implements code on `<type>/issue-<id>-<slug>` and verifies tests green.
 5. **Gate 3.5 Release**: Persona 6 opens the PR and awaits your explicit command (*"Tu peux merger"*).
+
+### 📋 Live Kanban Delivery Board (GitHub Projects v2)
+
+Explore the live delivery board in action:  
+👉 **[Live Delivery Board #2](https://github.com/users/nicolasvd/projects/2)** (`Agentic Delivery Board`)
+
+The board is updated automatically in real-time by the kernel automation:
+* **`Ready`**: Set at **Gate 1.4** upon JIT sealing via `./scripts/seal-issue.sh` with computed `Priority`, `Size`, and `Estimate`.
+* **`In Progress`**: Synchronized automatically when Persona 5 checks out the dedicated branch.
+* **`In Review`**: Set when Persona 6 opens the PR at Gate 3.5.
+* **`Done`**: Updated atomically upon human-authorized merge and dual-sync.
 
 ---
 

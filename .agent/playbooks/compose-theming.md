@@ -7,15 +7,15 @@ triggers: Any UI component change, new screen, token update in DESIGN.md or Colo
 
 # Skill: Compose Theming & 4-State UI Matrix
 
-> Extracted from `Theme.kt`, `Color.kt`, `Type.kt`, `design-system.md` (Material 3 token table), and project `SecondBrainTheme` / `SereneCustomColors` implementations.
+> Extracted from `Theme.kt`, `Color.kt`, `Type.kt`, `design-system.md` (Material 3 token table), and project `AgenticAndroidStarterTheme` / `SereneCustomColors` implementations.
 
 ---
 
 ## 1. Theme Entry Point
 
 ```kotlin
-// Always wrap the root content in SecondBrainTheme (never AppTheme in new code)
-SecondBrainTheme(
+// Always wrap the root content in AgenticAndroidStarterTheme (never AppTheme in new code)
+AgenticAndroidStarterTheme(
     darkTheme = isSystemInDarkTheme(),
     dynamicColor = false   // DISABLED project-wide — Serene palette is locked
 ) {

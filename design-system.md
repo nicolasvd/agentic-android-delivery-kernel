@@ -169,7 +169,7 @@ graph LR
 | **Tap "Share in Duo" (`AddMentalLoad` / `EditSheet`)** | Opens `AuthRequiredDialog` (soft-gating prompt). | Opens `PartnerLinkDialog` (invitation code input). | Toggles sharing directly into couple energy balance. |
 | **Profile Screen (`ProfileScreen`)** | Displays Guest Mode banner with Google Sign-In CTA. | Displays Google email, Solo status, and Partner Link button. | Displays both partners (Alex & Sam), focus streak, and sanctuary code. |
 | **Trends & Analytics (`TrendsScreen`)** | Displays Zen empty state encouraging Duo mode. | Displays personal cognitive statistics and velocity. | Displays full weekly distribution and couple energy ledger. |
-| **TopBar (`SecondBrainTopBar`)** | Displays Guest avatar. Spinner only during local refresh. | Displays Google profile photo. Spinner during cloud sync. | Displays avatar and real-time duo sync status. |
+| **TopBar (`KernelTopBar`)** | Displays Guest avatar. Spinner only during local refresh. | Displays Google profile photo. Spinner during cloud sync. | Displays avatar and real-time duo sync status. |
 
 ---
 
@@ -248,7 +248,7 @@ graph LR
 
 | ID | Source Component | Trigger | Visual Effect | Timing & Easing | Target State |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| **ANIM-01** | `SecondBrainApp`<br>`AnimatedContent` | Screen navigation change (`currentScreen`) | **Cross-fade** (`fadeIn` + `fadeOut`) | `tween` (~220ms, `FastOutSlowInEasing`) | Target screen (`HOME`, `DAILY_VOTE`, `ADD_MENTAL_LOAD`, `TRENDS`, `SETTINGS`, `PROFILE`) |
+| **ANIM-01** | `KernelApp`<br>`AnimatedContent` | Screen navigation change (`currentScreen`) | **Cross-fade** (`fadeIn` + `fadeOut`) | `tween` (~220ms, `FastOutSlowInEasing`) | Target screen (`HOME`, `DAILY_VOTE`, `ADD_MENTAL_LOAD`, `TRENDS`, `SETTINGS`, `PROFILE`) |
 | **ANIM-02** | `HomeScreen`<br>`AnimatedStatNumber` | Numeric counter change | **Directional slide + Fade** (Up on increment, down on decrement) | `slideInVertically` + `slideOutVertically` + `fadeIn`/`fadeOut` (~300ms) | New count display with smooth transition |
 | **ANIM-03** | `DailyVoteScreen`<br>`DailyVoteItemCard` | Tap vote button (`vote_button_{id}`) | **Color transition + Bounce scale** | Spring `DampingRatioMediumBouncy` & `StiffnessMediumLow` | Task added/removed from Top 3, counter updated |
 | **ANIM-04** | `TrendsScreen`<br>`TrendsPriorityCard` | Screen load or distribution update | **Horizontal width expansion** of progress bar | `tween(800ms, FastOutSlowInEasing)` | Bar matches area percentage |
