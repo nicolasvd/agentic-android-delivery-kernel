@@ -46,16 +46,18 @@ gh pr list --state open
 ```
 If an open PR exists, STOP. The active PR must be reviewed and merged first.
 
-### Step 3: Rebase on Main & Push Dedicated Branch
+### Step 3: Rebase on Base Branch & Push Dedicated Branch
 ```bash
 CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
-git fetch origin main && git rebase origin/main
+BASE_BRANCH="main" # Or epic/issue-<epic_id>-<slug> if child task
+git fetch origin "$BASE_BRANCH" && git rebase "origin/$BASE_BRANCH"
 git push -u origin "$CURRENT_BRANCH"
 ```
 
 ### Step 4: Generate Walkthrough from Template
 Populate [`.agent/templates/pr-walkthrough.md`](../../templates/pr-walkthrough.md) in `./walkthrough.md`:
 - Link source issue: `Closes #<issue_id>`
+- Base branch: `{{BASE_BRANCH|main}}`
 - Summary of changes
 - Affected files and diff statistics
 - Quality Airbag verification table
@@ -66,7 +68,7 @@ Populate [`.agent/templates/pr-walkthrough.md`](../../templates/pr-walkthrough.m
 Inspect staged changes and conventional commit type:
 - If type is `docs` or `chore(governance)`, OR
 - If no files under `app/` are touched, OR
-- If PR is an intermediate child issue of an Epic:
+- If PR is an intermediate child task of an Epic:
 **Append `--label "skip-release"`** (or pass `["skip-release"]` in labels array to MCP).
 
 ```json
@@ -75,7 +77,7 @@ GitHubMCP:create_pull_request {
   "repo": "<repo>",
   "title": "<type>(<scope>): <description>",
   "head": "<CURRENT_BRANCH>",
-  "base": "main",
+  "base": "<BASE_BRANCH>",
   "body": "..."
 }
 ```

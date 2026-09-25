@@ -1,25 +1,23 @@
 ---
 template: epic-spec
-version: 1.0.0
-usage: Use for Complexity L issues. Post as GitHubMCP:add_issue_comment on the parent Epic.
-guardrail: Zero Branch on Epic — child issues must be created for implementation.
+version: 2.0.0
+usage: Authoritative sealed body for Epic Issues created at Gate 1.4 via scripts/seal-issue.sh.
+guardrail: Epic Branch Isolation — child tasks branch from and merge into epic/issue-<id>-<slug>.
 ---
 
 # Epic Architectural Spec: #{{EPIC_ID}} — {{EPIC_TITLE}}
 
-> **Zero Branch Guardrail**: This issue is an architectural container.
-> Creating branches or committing code directly on #{{EPIC_ID}} is **strictly forbidden**.
-> Implementation proceeds exclusively via atomic child issues (< 300 diff lines) merged sequentially to `main`.
+> **Epic Branch Isolation Guardrail**: This issue is an architectural container.
+> An isolated integration branch `epic/issue-{{EPIC_ID}}-{{EPIC_SLUG}}` is created upon sealing.
+> Direct commits on `epic/**` are strictly forbidden. Implementation proceeds via atomic child issues (< 300 diff lines) branching from and merging into the Epic integration branch before a final release PR lands on `main`.
 
 ---
 
 ## 🎯 1. Vision & Strategic Objectives
 
 - **Goal**: {{EPIC_GOAL_SUMMARY}}
-- **Priority**: {{PRIORITY_P0_P1_P2}}
-- **Size**: `{{SIZE_L_OR_XL}}` (Epic Gated)
-- **Estimate**: {{ESTIMATE_DAYS_OR_POINTS}}
-- **Target Milestone**: `{{MILESTONE_NAME}}`
+- **Core Value & User Impact**: {{VALUE_PROPOSITION_SUMMARY}}
+- **Target Scope**: {{FUNCTIONAL_SCOPE_SUMMARY}}
 
 ---
 
@@ -34,28 +32,28 @@ guardrail: Zero Branch on Epic — child issues must be created for implementati
 
 ## 🗺️ 3. Sequential Decomposition DAG
 
-Child issues must be implemented in topological order. Intermediate child PRs carry the `skip-release` label to merge silently without triggering tags or distribution builds.
+Child issues must be implemented in topological order with strict WIP = 1. Child PRs target the Epic integration branch with `skip-release`.
 
-| Seq | Issue Title | Type | Target Diff | Depends On | Silent (`skip-release`) |
+| Seq | Child Issue Title | Type | Target Diff | Depends On | PR Base Target |
 |:---|:---|:---|:---|:---|:---|
-| 01 | `{{CHILD_1_TITLE}}` | `{{TYPE}}` | < 300 lines | None | ✅ Yes |
-| 02 | `{{CHILD_2_TITLE}}` | `{{TYPE}}` | < 300 lines | Step 01 | ✅ Yes |
-| 03 | `{{CHILD_3_TITLE}}` | `{{TYPE}}` | < 300 lines | Step 02 | ❌ No (Triggers Release) |
+| 01 | `{{CHILD_1_TITLE}}` | `{{TYPE}}` | < 300 lines | None | `epic/issue-{{EPIC_ID}}-...` |
+| 02 | `{{CHILD_2_TITLE}}` | `{{TYPE}}` | < 300 lines | Step 01 | `epic/issue-{{EPIC_ID}}-...` |
+| 03 | `{{CHILD_3_TITLE}}` | `{{TYPE}}` | < 300 lines | Step 02 | `epic/issue-{{EPIC_ID}}-...` |
 
 ---
 
-## 📋 4. Child Issues Checklist
+## 📋 4. Native Sub-Issues Architecture
 
-- [ ] #{{CHILD_1_ID}} — `{{CHILD_1_TITLE}}` (parent: #{{EPIC_ID}})
-- [ ] #{{CHILD_2_ID}} — `{{CHILD_2_TITLE}}` (parent: #{{EPIC_ID}})
-- [ ] #{{CHILD_3_ID}} — `{{CHILD_3_TITLE}}` (parent: #{{EPIC_ID}})
+Child tasks are sealed sequentially via JIT (`./scripts/seal-issue.sh --from-plan`) with native `--parent {{EPIC_ID}}`.
+Tracking, status, and completion roll-ups are managed natively via GitHub's Sub-issues hierarchy on this ticket.
 
 ---
 
 ## ✅ 5. Definition of Done (Epic Level)
 
-- [ ] All child issues merged sequentially into `main` with 100% CI pass.
+- [ ] All child issues merged sequentially into `epic/issue-{{EPIC_ID}}-{{EPIC_SLUG}}` with 100% CI pass.
 - [ ] Expand/Contract phases validated (Phase 1 Expand tests pass; Phase 2 Contract safely executed).
 - [ ] Zero regressions in existing Roborazzi snapshots and Firestore security rules.
-- [ ] Final child PR merged without `skip-release` label, successfully cutting release.
-- [ ] Milestone completion check passed; Epic issue #{{EPIC_ID}} closed.
+- [ ] Full Quality Airbag passed on the consolidated Epic integration branch.
+- [ ] Final Epic PR (`epic/issue-{{EPIC_ID}}-... → main`) merged with consolidated commit message closing #{{EPIC_ID}} and all child issues.
+- [ ] Epic issue #{{EPIC_ID}} closed; release train successfully triggered.

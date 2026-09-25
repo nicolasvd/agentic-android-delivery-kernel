@@ -133,6 +133,8 @@ check_file ".agent/rules/firebase-standards.md" "Firebase Standards & Security" 
 echo ""
 echo "⚙️ 8. Local Hooks & Installation Scripts:"
 check_executable "scripts/install-hooks.sh" "Hooks Installation Script"
+check_executable "scripts/seal-issue.sh" "Deterministic Issue Sealer Script" 8000
+check_executable "scripts/sync-project-metadata.mjs" "Projects v2 Metadata Sync Script" 7000
 check_executable ".agent/hooks/pre-commit-airbag.sh" "Pre-Commit Airbag Hook"
 check_executable ".agent/hooks/post-merge-dual-sync.sh" "Post-Merge Dual-Sync Hook"
 check_file ".agent/hooks.json" "Native Antigravity Hooks Declaration" 1000

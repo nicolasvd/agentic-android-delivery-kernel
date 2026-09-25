@@ -16,9 +16,10 @@ Closes #{{ISSUE_ID}}
 
 ## 📌 Summary
 
-**Branch**: `{{BRANCH_NAME}}` → `main`
+**Branch**: `{{BRANCH_NAME}}` → `{{BASE_BRANCH|main}}`
 **Type**: `{{TYPE}}({{SCOPE}})`
 **Related Issue**: [#{{ISSUE_ID}} {{ISSUE_TITLE}}](https://github.com/{{OWNER}}/{{REPO}}/issues/{{ISSUE_ID}})
+*(If child task)* **Parent Epic**: [#{{PARENT_ID}} {{PARENT_TITLE}}](https://github.com/{{OWNER}}/{{REPO}}/issues/{{PARENT_ID}})
 
 {{CHANGE_SUMMARY_BULLET_1}}
 {{CHANGE_SUMMARY_BULLET_2}}

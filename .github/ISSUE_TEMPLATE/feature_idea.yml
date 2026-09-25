@@ -1,34 +1,34 @@
 name: 💡 Feature Proposal
 description: Propose a new feature or improvement for Agentic Android Kernel
 title: "feat(<scope>): <short descriptive title>"
-labels: ["type:feature"]
+labels: ["feature"]
 body:
   - type: markdown
     attributes:
       value: |
         ### 🧠 Feature Proposal for Agentic Android Kernel
-        Thank you for contributing to mental load reduction! Please fill out this form to structure your feature following the Spec-Driven (4 Pillars) framework.
+        Thank you for contributing to the Agentic Android Delivery Kernel! Please fill out this form to propose a new feature adhering to the Spec-Driven (4 Pillars) framework.
   - type: dropdown
     id: scope
     attributes:
       label: Scope / Functional Domain
       description: Choose the primary domain affected by this feature.
       options:
-        - tasks (Mental load management, recurrence, cycles)
-        - matrix (Eisenhower matrix, 4-quadrant prioritization)
-        - duo (Couple mode, task rotation, shared synchronization)
-        - analytics (Trend charts, mental balance, gauges)
-        - core (Local Room database, Firestore synchronization, Auth)
-        - ai (Gemini automated classification, smart suggestions)
-        - ui (Visual components, serene animations, Theme)
+        - core (Local Room database, data repositories, clean architecture)
+        - ui (Jetpack Compose components, themes, animations, Roborazzi)
+        - ai (Gemini multimodal logic, smart agents, function calling)
+        - sync (Firestore synchronization, offline-first reconciliation)
+        - analytics (Zero-PII telemetry, adoption metrics, audit trails)
+        - tooling (Operational scripts, CI/CD automation, hooks)
+        - governance (Rules, personas, multi-agent protocol, templates)
     validations:
       required: true
   - type: textarea
     id: problem-context
     attributes:
-      label: Context & Mental Load Problem Statement
-      description: What is the real problem or friction experienced by the user or duo? How does it increase mental load?
-      placeholder: "Example: Recurring household tasks are often manually reassigned, causing friction and asymmetric load..."
+      label: Context & Problem Statement
+      description: What is the real problem or friction experienced? Why is this feature needed?
+      placeholder: "Example: Offline users currently experience delay when syncing items..."
     validations:
       required: true
   - type: textarea
@@ -36,7 +36,7 @@ body:
     attributes:
       label: Proposed Solution & User Experience (UX)
       description: Describe precisely the desired solution, user interactions, and expected outcome.
-      placeholder: "Example: Introduce an automatic alternating rotation rule upon completion of each recurring task..."
+      placeholder: "Example: Introduce an exponential backoff retry mechanism with local Room queue..."
     validations:
       required: true
   - type: textarea
@@ -44,7 +44,7 @@ body:
     attributes:
       label: Desired Impact Metrics & Telemetry
       description: Which telemetry events (event_name, parameters) or usage metrics will measure adoption and success?
-      placeholder: "Example:\n- event_name: 'recurring_task_created' (params: frequency, is_duo_rotating, area)\n- event_name: 'duo_rotation_assigned' (params: frequency, rotation_role, cycle_count)"
+      placeholder: "Example:\n- event_name: 'feature_activated' (params: feature_id, source)\n- event_name: 'sync_completed' (params: latency_ms, items_count)"
     validations:
       required: false
   - type: textarea
@@ -52,7 +52,7 @@ body:
     attributes:
       label: Technical Architecture & Implementation Notes (Optional)
       description: Anticipated implementation details (Room Schema, StateFlow, ViewModel, Jetpack Compose, Gemini, Firestore).
-      placeholder: "Example: Add 'rotationRule' field to MentalLoadItem, update SecondBrainRepository..."
+      placeholder: "Example: Add 'priority' field to Entity, update KernelRepository..."
     validations:
       required: false
   - type: checkboxes
@@ -65,7 +65,7 @@ body:
           required: true
         - label: 100% Jetpack Compose UI compliant with Serene UI principles (gentle animations, zero friction)
           required: true
-        - label: Formalized Analytics & Observability contract
+        - label: Formalized Analytics & Observability contract (Zero-PII)
           required: true
         - label: Unit tests & Robolectric (100% passing on './scripts/quality-check.sh')
           required: true
