@@ -1,70 +1,70 @@
-name: 🐛 Bug Report / Rapport d'Anomalie
-description: Signaler un dysfonctionnement, une régression ou un problème de synchronisation
+name: 🐛 Bug Report
+description: Report a malfunction, regression, or synchronization issue
 title: "fix(<scope>): <short descriptive bug title>"
 labels: ["type:bug"]
 body:
   - type: markdown
     attributes:
       value: |
-        ### 🔍 Signalement d'anomalie Agentic Android Kernel
-        Merci de détailler le comportement inattendu pour faciliter le diagnostic et la correction.
+        ### 🔍 Agentic Android Kernel Bug Report
+        Please detail the unexpected behavior to facilitate diagnosis and resolution.
   - type: dropdown
     id: scope
     attributes:
-      label: Périmètre / Domaine affecté
-      description: Choisissez le domaine principal où le bug se produit.
+      label: Scope / Affected Domain
+      description: Choose the primary domain where the bug occurs.
       options:
-        - tasks (Création, édition, suppression, complétion de charge)
-        - matrix (Affichage ou interaction matrice Eisenhower)
-        - duo (Synchronisation en temps réel, association couple)
-        - analytics (Calcul de jauge, tendances, graphiques)
-        - auth (Connexion Google, sessions)
-        - sync (Firestore, Room, hors-ligne)
-        - ui (Affichage, glitch visuel, animation)
-        - ai (Classification Gemini, timeout API)
+        - tasks (Creation, editing, deletion, mental load completion)
+        - matrix (Eisenhower matrix display or interaction)
+        - duo (Real-time synchronization, duo pairing)
+        - analytics (Gauge calculation, trends, charts)
+        - auth (Google Sign-In, sessions)
+        - sync (Firestore, Room, offline)
+        - ui (Display, visual glitch, animation)
+        - ai (Gemini classification, API timeout)
     validations:
       required: true
   - type: textarea
     id: bug-description
     attributes:
-      label: Description du Bug
-      description: Description claire et concise de l'anomalie rencontrée.
-      placeholder: "Exemple : Lors du changement d'onglet vers Duo, l'état de chargement reste figé..."
+      label: Bug Description
+      description: Clear and concise description of the issue encountered.
+      placeholder: "Example: When switching to the Duo tab, the loading state remains stuck..."
     validations:
       required: true
   - type: textarea
     id: steps-to-reproduce
     attributes:
-      label: Étapes pour Reproduire
-      description: Quelles sont les actions exactes menant au problème ?
+      label: Steps to Reproduce
+      description: What are the exact steps leading to the problem?
       placeholder: |
-        1. Ouvrir l'application
-        2. Aller sur l'onglet 'Matrice'
-        3. Glisser une tâche vers le quadrant 'Déléguer'
-        4. Observer l'erreur...
+        1. Open the application
+        2. Go to the 'Matrix' tab
+        3. Drag a task to the 'Delegate' quadrant
+        4. Observe the error...
     validations:
       required: true
   - type: textarea
     id: expected-vs-actual
     attributes:
-      label: Comportement Attendu vs Comportement Observé
-      description: Qu'aurait-il dû se passer et que s'est-il passé ?
-      placeholder: "Attendu : La tâche change de quadrant avec une animation fluide.\nObservé : Crash ou tâche inchangée."
+      label: Expected vs. Actual Behavior
+      description: What should have happened, and what actually occurred?
+      placeholder: "Expected: Task moves to target quadrant with smooth animation.\nActual: Crash or task remains unchanged."
     validations:
       required: true
   - type: input
     id: environment
     attributes:
-      label: Environnement de Test
-      description: Appareil, version d'Android, version de l'application.
-      placeholder: "Pixel 8 Pro - Android 14 / Émulateur API 34 - v0.1.0"
+      label: Test Environment
+      description: Device model, Android OS version, application version.
+      placeholder: "Pixel 8 Pro - Android 14 / Emulator API 34 - v0.1.0"
     validations:
       required: false
   - type: textarea
     id: logs-and-stacktrace
     attributes:
-      label: Logs / Stacktrace (Optionnel)
-      description: Collez ici les logs Android Studio / Logcat pertinents.
+      label: Logs / Stacktrace (Optional)
+      description: Paste relevant Android Studio / Logcat logs here.
       placeholder: "Logcat / Stacktrace..."
     validations:
       required: false

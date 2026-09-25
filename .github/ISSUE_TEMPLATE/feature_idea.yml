@@ -1,71 +1,71 @@
-name: 💡 Feature Proposal / Idée de Fonctionnalité
-description: Proposer une nouvelle fonctionnalité ou amélioration pour Agentic Android Kernel
+name: 💡 Feature Proposal
+description: Propose a new feature or improvement for Agentic Android Kernel
 title: "feat(<scope>): <short descriptive title>"
 labels: ["type:feature"]
 body:
   - type: markdown
     attributes:
       value: |
-        ### 🧠 Proposition d'évolution Agentic Android Kernel
-        Merci de contribuer à la réduction de la charge mentale ! Veuillez remplir ce formulaire pour structurer la fonctionnalité selon la démarche Spec-Driven (4 Piliers).
+        ### 🧠 Feature Proposal for Agentic Android Kernel
+        Thank you for contributing to mental load reduction! Please fill out this form to structure your feature following the Spec-Driven (4 Pillars) framework.
   - type: dropdown
     id: scope
     attributes:
-      label: Périmètre / Domaine fonctionnel
-      description: Choisissez le domaine principal concerné par cette fonctionnalité.
+      label: Scope / Functional Domain
+      description: Choose the primary domain affected by this feature.
       options:
-        - tasks (Gestion des charges, récurrence, cycles)
-        - matrix (Matrice Eisenhower, priorisation 4 quadrants)
-        - duo (Mode Couple, rotation, synchronisation partagée)
-        - analytics (Graphiques de tendances, équilibre mental, jauges)
-        - core (Base de données locale Room, synchronisation Firestore, Auth)
-        - ai (Gemini classification automatique, suggestions intelligentes)
-        - ui (Composants visuels, animations sereines, Thème)
+        - tasks (Mental load management, recurrence, cycles)
+        - matrix (Eisenhower matrix, 4-quadrant prioritization)
+        - duo (Couple mode, task rotation, shared synchronization)
+        - analytics (Trend charts, mental balance, gauges)
+        - core (Local Room database, Firestore synchronization, Auth)
+        - ai (Gemini automated classification, smart suggestions)
+        - ui (Visual components, serene animations, Theme)
     validations:
       required: true
   - type: textarea
     id: problem-context
     attributes:
-      label: Contexte & Problématique Charge Mentale
-      description: Quel est le problème réel ou la friction vécue par l'utilisateur ou le duo ? En quoi cela alourdit-il la charge mentale ?
-      placeholder: "Exemple : Les tâches ménagères récurrentes sont souvent réassignées manuellement, provoquant des frictions et une asymétrie de charge..."
+      label: Context & Mental Load Problem Statement
+      description: What is the real problem or friction experienced by the user or duo? How does it increase mental load?
+      placeholder: "Example: Recurring household tasks are often manually reassigned, causing friction and asymmetric load..."
     validations:
       required: true
   - type: textarea
     id: proposed-solution
     attributes:
-      label: Solution Proposée & Expérience Utilisateur (UX)
-      description: Décrivez précisément la solution souhaitée, les interactions utilisateur et le résultat attendu.
-      placeholder: "Exemple : Introduire une règle de rotation alternée automatique à chaque complétion d'une charge récurrente..."
+      label: Proposed Solution & User Experience (UX)
+      description: Describe precisely the desired solution, user interactions, and expected outcome.
+      placeholder: "Example: Introduce an automatic alternating rotation rule upon completion of each recurring task..."
     validations:
       required: true
   - type: textarea
     id: impact-analytics
     attributes:
-      label: Mesure d'impact & Analytics souhaités
-      description: Quels événements télémétriques (event_name, paramètres) ou métriques d'usage permettront de mesurer l'adoption et le succès de cette fonctionnalité ?
-      placeholder: "Exemple :\n- event_name: 'recurring_task_created' (params: frequency, is_duo_rotating, area)\n- event_name: 'duo_rotation_assigned' (params: frequency, rotation_role, cycle_count)"
+      label: Desired Impact Metrics & Telemetry
+      description: Which telemetry events (event_name, parameters) or usage metrics will measure adoption and success?
+      placeholder: "Example:\n- event_name: 'recurring_task_created' (params: frequency, is_duo_rotating, area)\n- event_name: 'duo_rotation_assigned' (params: frequency, rotation_role, cycle_count)"
     validations:
       required: false
   - type: textarea
     id: technical-architecture
     attributes:
-      label: Pistes Techniques & Architecture (Optionnel)
-      description: Éléments pressentis pour l'implémentation (Room Schema, StateFlow, ViewModel, Jetpack Compose, Gemini, Firestore).
-      placeholder: "Exemple : Ajout d'un champ `rotationRule` dans MentalLoadItem, mise à jour de SecondBrainRepository..."
+      label: Technical Architecture & Implementation Notes (Optional)
+      description: Anticipated implementation details (Room Schema, StateFlow, ViewModel, Jetpack Compose, Gemini, Firestore).
+      placeholder: "Example: Add 'rotationRule' field to MentalLoadItem, update SecondBrainRepository..."
     validations:
       required: false
   - type: checkboxes
     id: quality-commitments
     attributes:
-      label: Engagements Qualité & Guidelines
-      description: Critères obligatoires de validation pour l'implémentation future.
+      label: Quality Commitments & Guidelines
+      description: Mandatory validation criteria for future implementation.
       options:
-        - label: Respect de l'architecture MVI / Clean Kotlin (ViewModel, StateFlow, Room / Firestore)
+        - label: Adherence to MVI / Clean Kotlin architecture (ViewModel, StateFlow, Room / Firestore)
           required: true
-        - label: UI 100% Jetpack Compose conforme aux principes Serene UI (animations douces, zéro friction)
+        - label: 100% Jetpack Compose UI compliant with Serene UI principles (gentle animations, zero friction)
           required: true
-        - label: Contrat d'Analytics & Observabilité formalisé
+        - label: Formalized Analytics & Observability contract
           required: true
-        - label: Tests unitaires & Robolectric (100% passing sur `./scripts/quality-check.sh`)
+        - label: Unit tests & Robolectric (100% passing on './scripts/quality-check.sh')
           required: true

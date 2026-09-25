@@ -10,7 +10,7 @@ fi
 
 if [ -n "$BRANCH" ] && [ "$BRANCH" != "$DEF" ] && [ "$BRANCH" != "main" ] && [ "$BRANCH" != "master" ]; then
     cat <<EOF
-{"injectSteps":[{"ephemeralMessage":"[SYSTEM CONTEXT: Branche active: '$BRANCH' | État: Code / PR Review Loop. Applique toute correction ou retour de test directement sur cette branche. Ne PAS créer de nouvelle issue ni de nouvelle branche.]"}]}
+{"injectSteps":[{"ephemeralMessage":"[SYSTEM CONTEXT: Active branch: '$BRANCH' | State: Code / PR Review Loop. Apply all fixes or test feedback directly on this branch. Do NOT create a new issue or branch.]"}]}
 EOF
 else
     echo '{"injectSteps":[]}'
